@@ -140,7 +140,7 @@
    "fetch_from": null,
    "fetch_if_empty": 0,
    "fieldname": "text_fuer_druck",
-   "fieldtype": "Tab Break",
+   "fieldtype": "Text",
    "hidden": 0,
    "hide_border": 0,
    "hide_days": 0,
