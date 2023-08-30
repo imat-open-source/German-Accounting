@@ -1,0 +1,24 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Item",
+  "enabled": 1,
+  "modified": "2023-08-29 20:53:28.134486",
+  "module": "German Accounting",
+  "name": "Item query filter",
+  "script": "frappe.ui.form.on('Item', {\n\tonload: function(frm) {\n\t\tfrm.set_query(\"item_group\", function() {\n\t\t\treturn {\n\t\t\t\tfilters: {\n\t\t\t\t\tname: ['in', [\"Sonsige Leistung\", \"Lieferung\"]]\n\t\t\t\t}\n\t\t\t}\n\t\t})\n\t},\n})",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Sales Order",
+  "enabled": 1,
+  "modified": "2023-08-29 22:04:43.938627",
+  "module": null,
+  "name": "Sales Order Query",
+  "script": "frappe.ui.form.on('Sales Order', {\n    validate: function(frm) {\n\n        var row;\n        var liefbetrag = 0;\n        var sonstbetrag = 0;\n        for (row in frm.doc.items) {\n            if (frm.doc.items[row].item_group == \"Lieferung\") {\n                liefbetrag += frm.doc.items[row].qty * frm.doc.items[row].price_list_rate;\n            }\n            if (frm.doc.items[row].item_group == \"SonstigeLeistung\") {\n                sonstbetrag += frm.doc.items[row].qty * frm.doc.items[row].price_list_rate;\n            }\n        }\n        if (liefbetrag >= sonstbetrag) {\n            frm.set_value(\"artikelkategorie_nach_amount\", \"Lieferung\");\n        } else {\n            frm.set_value(\"artikelkategorie_nach_amount\", \"SonstigeLeistung\");\n        }\n        if (frm.doc.auswahl_ziel == \"Inland\" && frm.doc.artikelkategorie_nach_amount == \"Lieferung\") {\n            frm.set_value(\"text_f\u00fcr_druck\", \"19% Ust\");\n        }\n        if (frm.doc.auswahl_ziel == \"Inland\" && frm.doc.artikelkategorie_nach_amount == \"Sonstige Leistung\") {\n            frm.set_value(\"text_f\u00fcr_druck\", \"19% Ust\");\n        }\n        if (frm.doc.auswahl_ziel == \"EU-Ausland\" && frm.doc.artikelkategorie_nach_amount == \"Lieferung\") {\n            if (frm.doc.uid == \"Ja\") {\n                frm.set_value(\"text_f\u00fcr_druck\", \"0% Ust \u2013Steuerfreie innergemeinschaftliche Lieferung\");\n            } else {\n                frm.set_value(\"text_f\u00fcr_druck\", \"19% Ust\");\n            }\n        }\n        if (frm.doc.auswahl_ziel == \"EU-Ausland\" && frm.doc.artikelkategorie_nach_amount == \"Sonstige Leistung\") {\n            if (frm.doc.uid == \"Ja\") {\n                frm.set_value(\"text_f\u00fcr_druck\", \"0% Ust \u2013Steuerfreie innergemeinschaftliche Lieferung (Reverse-ChargeVerfahren)\");\n\n            } else {\n                frm.set_value(\"text_f\u00fcr_druck\", \"19% Ust\");\n            }\n        }\n        if (frm.doc.auswahl_ziel == \"Drittland\" && frm.doc.artikelkategorie_nach_amount == \"Lieferung\") {\n            frm.set_value(\"text_f\u00fcr_druck\", \"0% Ust \u2013Umsatzsteuerfreie Ausfuhrlieferung\");\n        }\n        if (frm.doc.auswahl_ziel == \"Drittland\" && frm.doc.artikelkategorie_nach_amount == \"Sonstige Leistung\") {\n            if (frm.doc.uid == \"Ja\") {\n                frm.set_value(\"text_f\u00fcr_druck\", \"0% Ust \u2013Im Inland nicht steuerbare Leistung\");\n            } else {\n                frm.set_value(\"text_f\u00fcr_druck\", \"19% Ust\");\n            }\n        }\n    }\n})",
+  "view": "Form"
+ }
+]
