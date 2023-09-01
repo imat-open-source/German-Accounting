@@ -29,7 +29,23 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+    "Quotation" : "public/js/sales_invoice.js",
+    "Sales Order" : "public/js/sales_invoice.js",
+    "Sales Invoice" : "public/js/sales_invoice.js"
+}
+
+doc_events = {
+    "Quotation": {
+        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+	},
+    "Sales Order": {
+        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+	},
+    "Sales Invoice": {
+        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+	}
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -101,14 +117,6 @@ app_license = "MIT"
 # Document Events
 # ---------------
 # Hook on document methods and events
-
-# doc_events = {
-#	"*": {
-#		"on_update": "method",
-#		"on_cancel": "method",
-#		"on_trash": "method"
-#	}
-# }
 
 # Scheduled Tasks
 # ---------------
@@ -199,3 +207,16 @@ app_license = "MIT"
 # auth_hooks = [
 #	"german_accounting.auth.validate"
 # ]
+
+fixtures = [
+    {"dt": "Client Script", "filters": [
+        [
+            "name", "in", [
+                "Quotation Query",
+                "Sales Invoice Query",
+                "Item query filter",
+                "Sales Order Query"
+            ]
+        ]
+    ]}
+]
