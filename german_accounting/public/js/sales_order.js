@@ -1,0 +1,1 @@
+{% include "german_accounting/public/js/extended_tax_category.js" %}
