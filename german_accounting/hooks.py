@@ -207,16 +207,3 @@ doc_events = {
 # auth_hooks = [
 #	"german_accounting.auth.validate"
 # ]
-
-fixtures = [
-    {"dt": "Client Script", "filters": [
-        [
-            "name", "in", [
-                "Quotation Query",
-                "Sales Invoice Query",
-                "Item query filter",
-                "Sales Order Query"
-            ]
-        ]
-    ]}
-]
