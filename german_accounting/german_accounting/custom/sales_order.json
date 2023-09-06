@@ -243,28 +243,7 @@
  ],
  "custom_perms": [],
  "doctype": "Sales Order",
- "links": [
-  {
-   "creation": "2013-06-18 12:39:59",
-   "custom": 0,
-   "docstatus": 0,
-   "group": "Test",
-   "hidden": 0,
-   "idx": 1,
-   "is_child_table": 1,
-   "link_doctype": "Purchase Order Item",
-   "link_fieldname": "sales_order",
-   "modified": "2023-08-30 21:25:33.327151",
-   "modified_by": "Administrator",
-   "name": "3eb1685c6d",
-   "owner": "Administrator",
-   "parent": "Sales Order",
-   "parent_doctype": "Purchase Order",
-   "parentfield": "links",
-   "parenttype": "DocType",
-   "table_fieldname": "items"
-  }
- ],
+ "links": [],
  "property_setters": [],
  "sync_on_migrate": 1
 }
