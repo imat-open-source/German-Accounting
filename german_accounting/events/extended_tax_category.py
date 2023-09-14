@@ -7,9 +7,9 @@ def validate_tax_category_fields(doc, method=None):
     # Here we go through the item table and count the amounts for the two categories
     for item in doc.get("items"):
         if item.item_group == "Goods":
-            goods += item.qty * item.price_list_rate
+            goods += item.amount
         elif item.item_group == "Services":
-            services += item.qty * item.price_list_rate
+            services += item.amount
 
     # Test which amount is higher...
     if goods >= services:
@@ -25,13 +25,13 @@ def validate_tax_category_fields(doc, method=None):
         doc.vat_print_display = "19% VAT"
 
     if doc.destination_selection == "EU country (except Germany)" and doc.item_category_by_amount == "Goods":
-        if doc.vat_id == "Yes":
+        if doc.is_vat_id_applicable:
             doc.vat_print_display = "0% VAT, tax-free intra-community supply"
         else:
             doc.vat_print_display = "19% VAT"
 
     if doc.destination_selection == "EU country (except Germany)" and doc.item_category_by_amount == "Services":
-        if doc.vat_id == "Yes":
+        if doc.is_vat_id_applicable:
             doc.vat_print_display = "0% VAT, tax-free intra-community service (reverse charge procedure)"
         else:
             doc.vat_print_display = "19% VAT"
@@ -40,7 +40,7 @@ def validate_tax_category_fields(doc, method=None):
         doc.vat_print_display = "0% VAT, VAT-free export delivery "
 
     if doc.destination_selection == "Non-EU country" and doc.item_category_by_amount == "Services":
-        if doc.vat_id == "Yes":
+        if doc.is_vat_id_applicable:
             doc.vat_print_display = "0% VAT, service non-taxable domestically"
         else:
             doc.vat_print_display = "19% VAT"
