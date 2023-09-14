@@ -29,11 +29,11 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {
-    "Quotation" : "public/js/sales_invoice.js",
-    "Sales Order" : "public/js/sales_invoice.js",
-    "Sales Invoice" : "public/js/sales_invoice.js"
-}
+# doctype_js = {
+#     "Quotation" : "public/js/quotation.js",
+#     "Sales Order" : "public/js/sales_order.js",
+#     "Sales Invoice" : "public/js/sales_invoice.js"
+# }
 
 doc_events = {
     "Quotation": {
@@ -79,13 +79,13 @@ doc_events = {
 # Installation
 # ------------
 
-# before_install = "german_accounting.install.before_install"
-# after_install = "german_accounting.install.after_install"
+after_migrate = "german_accounting.setup.install.after_migrate"
+after_install = "german_accounting.setup.install.after_migrate"
 
 # Uninstallation
 # ------------
 
-# before_uninstall = "german_accounting.uninstall.before_uninstall"
+before_uninstall = "german_accounting.setup.install.before_uninstall"
 # after_uninstall = "german_accounting.uninstall.after_uninstall"
 
 # Desk Notifications
