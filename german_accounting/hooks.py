@@ -28,22 +28,16 @@ app_license = "MIT"
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
 
-# include js in doctype views
-# doctype_js = {
-#     "Quotation" : "public/js/quotation.js",
-#     "Sales Order" : "public/js/sales_order.js",
-#     "Sales Invoice" : "public/js/sales_invoice.js"
-# }
 
 doc_events = {
     "Quotation": {
-        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+        "before_submit": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
 	},
     "Sales Order": {
-        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+        "before_submit": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
 	},
     "Sales Invoice": {
-        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+        "before_submit": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
 	}
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
