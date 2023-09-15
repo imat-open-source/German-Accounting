@@ -3,8 +3,8 @@ from frappe.utils import flt
 from frappe.utils.nestedset import get_descendants_of
 
 def validate_tax_category_fields(doc, method=None):
-    goods = 0
-    services = 0
+    goods_amt_sum = 0.0
+    services_amt_sum = 0.0
 
     def get_parent_and_descendants_list(item_group):
         item_groups = [item_group]
@@ -17,12 +17,12 @@ def validate_tax_category_fields(doc, method=None):
     # Here we go through the item table and count the amounts for the two categories
     for item in doc.get("items"):
         if item.item_group in get_parent_and_descendants_list("Goods"):
-            goods += item.amount
-            services += item.amount
+            goods_amt_sum += flt(item.amount)
         elif item.item_group in get_parent_and_descendants_list("Services"):
+            services_amt_sum += flt(item.amount)
 
     # Test which amount is higher...
-    if goods >= services:
+    if goods_amt_sum >= services_amt_sum:
         doc.item_category_by_amount = "Goods"
     else:
         doc.item_category_by_amount = "Services"
