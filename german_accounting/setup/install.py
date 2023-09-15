@@ -12,13 +12,13 @@ def before_uninstall():
 
 def delete_custom_fields(custom_fields):
 	for doctype, fields in custom_fields.items():
-		frappe.db.delete(
-			"Custom Field",
-			{
-				"fieldname": ("in", [field["fieldname"] for field in fields]),
-				"dt": doctype,
-			},
-		)
+		for field in fields:
+			custom_field_name = frappe.db.get_value(
+				"Custom Field", dict(dt=doctype, fieldname=field.get("fieldname"))
+			)
+			if custom_field_name:
+				frappe.delete_doc("Custom Field", custom_field_name)
+
 		frappe.clear_cache(doctype=doctype)
 
 
