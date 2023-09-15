@@ -23,33 +23,33 @@ def validate_tax_category_fields(doc, method=None):
 
     # Test which amount is higher...
     if goods_amt_sum >= services_amt_sum:
-        doc.item_category_by_amount = "Goods"
+        item_category_by_amount = "Goods"
     else:
-        doc.item_category_by_amount = "Services"
+        item_category_by_amount = "Services"
 
     # Case distinction for "vat_print_display"
-    if doc.destination_selection == "Germany" and doc.item_category_by_amount == "Goods":
+    if doc.destination_selection == "Germany" and item_category_by_amount == "Goods":
         doc.vat_print_display = "19% VAT"
 
-    if doc.destination_selection == "Germany" and doc.item_category_by_amount == "Services":
+    if doc.destination_selection == "Germany" and item_category_by_amount == "Services":
         doc.vat_print_display = "19% VAT"
 
-    if doc.destination_selection == "EU country (except Germany)" and doc.item_category_by_amount == "Goods":
+    if doc.destination_selection == "EU country (except Germany)" and item_category_by_amount == "Goods":
         if doc.is_vat_id_applicable:
             doc.vat_print_display = "0% VAT, tax-free intra-community supply"
         else:
             doc.vat_print_display = "19% VAT"
 
-    if doc.destination_selection == "EU country (except Germany)" and doc.item_category_by_amount == "Services":
+    if doc.destination_selection == "EU country (except Germany)" and item_category_by_amount == "Services":
         if doc.is_vat_id_applicable:
             doc.vat_print_display = "0% VAT, tax-free intra-community service (reverse charge procedure)"
         else:
             doc.vat_print_display = "19% VAT"
 
-    if doc.destination_selection == "Non-EU country" and doc.item_category_by_amount == "Goods":
+    if doc.destination_selection == "Non-EU country" and item_category_by_amount == "Goods":
         doc.vat_print_display = "0% VAT, VAT-free export delivery "
 
-    if doc.destination_selection == "Non-EU country" and doc.item_category_by_amount == "Services":
+    if doc.destination_selection == "Non-EU country" and item_category_by_amount == "Services":
         if doc.is_vat_id_applicable:
             doc.vat_print_display = "0% VAT, service non-taxable domestically"
         else:
