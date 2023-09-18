@@ -10,7 +10,7 @@ def validate_tax_category_fields(doc, method=None):
         item_groups = [item_group]
         descendants_item_group = get_descendants_of("Item Group", item_group)
         if descendants_item_group:
-            item_groups + descendants_item_group
+            item_groups = item_groups + descendants_item_group
 
         return item_groups
 
