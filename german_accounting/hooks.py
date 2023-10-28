@@ -31,13 +31,13 @@ app_license = "MIT"
 
 doc_events = {
     "Quotation": {
-        "before_submit": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
 	},
     "Sales Order": {
-        "before_submit": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
 	},
     "Sales Invoice": {
-        "before_submit": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
+        "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
 	}
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
