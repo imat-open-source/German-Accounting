@@ -23,30 +23,45 @@ def delete_custom_fields(custom_fields):
 
 
 def get_custom_fields():
-	custom_fields = [
+	custom_fields_transaction = [
 		{
-			"label": "Is VAT ID Applicable",
-			"fieldname": "is_vat_id_applicable",
-			"fieldtype": "Check",
-			"insert_after": "scan_barcode"
+			"label": "IMAT Section",
+			"fieldname": "imat_section",
+			"fieldtype": "Section Break",
 		},
 		{
-			"label": "Destination Selection",
-			"fieldname": "destination_selection",
-			"fieldtype": "Select",
-			"options": "Germany\nEU country (except Germany)\nNon-EU country",
-			"insert_after": "is_vat_id_applicable"
+			"label": "Item Group",
+			"fieldname": "item_group",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 1,
+			"insert_after": "imat_section",
+			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
-			"label": "VAT Print Display",
-			"fieldname": "vat_print_display",
-			"fieldtype": "Text",
-			"insert_after": "items"
+			"label": "VAT ID",
+			"fieldname": "vatid",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 1,
+			"insert_after": "item_group",
+			"fetch_from": "customer_address.vatid",
+			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
+		}
+	]
+
+	address_custom_field = [
+		{
+			"label": "VAT ID",
+			"fieldname": "vatid",
+			"fieldtype": "Data",
+			"insert_after": "fax"
 		}
 	]
 
 	return {
-		"Quotation": custom_fields,
-		"Sales Order": custom_fields,
-		"Sales Invoice": custom_fields
+		"Address": address_custom_field,
+		"Quotation": custom_fields_transaction,
+		"Sales Order": custom_fields_transaction,
+		"Sales Invoice": custom_fields_transaction
 	}
