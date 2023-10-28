@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-10-28 13:13:09.717560",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "goods_item_group",
+  "column_break_cx7ey",
+  "service_item_group"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_cx7ey",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "goods_item_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Goods Item Group",
+   "options": "Item Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "service_item_group",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Service Item Group",
+   "options": "Item Group",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-10-28 13:20:29.747979",
+ "modified_by": "Administrator",
+ "module": "German Accounting",
+ "name": "German Accounting Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
