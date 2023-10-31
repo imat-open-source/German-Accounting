@@ -45,7 +45,7 @@ def get_custom_fields():
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "item_group",
-			"fetch_from": "customer_address.vatid",
+			"fetch_from": "party_name.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
 		}
 	]
@@ -57,12 +57,12 @@ def get_custom_fields():
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "fax"
+			"insert_after": "tax_id"
 		}
 	]
 
 	return {
-		"Address": address_custom_field,
+		"Customer": address_custom_field,
 		"Quotation": custom_fields_transaction,
 		"Sales Order": custom_fields_transaction,
 		"Sales Invoice": custom_fields_transaction
