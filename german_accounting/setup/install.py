@@ -34,33 +34,13 @@ def get_custom_fields():
 			"fieldname": "item_group",
 			"fieldtype": "Data",
 			"read_only": 1,
-			"translatable": 1,
+			"translatable": 0,
 			"insert_after": "imat_section",
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
-		},
-		{
-			"label": "VAT ID",
-			"fieldname": "vatid",
-			"fieldtype": "Data",
-			"read_only": 1,
-			"translatable": 1,
-			"insert_after": "item_group",
-			"fetch_from": "customer_address.vatid",
-			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
-		}
-	]
-
-	address_custom_field = [
-		{
-			"label": "VAT ID",
-			"fieldname": "vatid",
-			"fieldtype": "Data",
-			"insert_after": "fax"
 		}
 	]
 
 	return {
-		"Address": address_custom_field,
 		"Quotation": custom_fields_transaction,
 		"Sales Order": custom_fields_transaction,
 		"Sales Invoice": custom_fields_transaction
