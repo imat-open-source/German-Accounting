@@ -37,6 +37,16 @@ def get_custom_fields():
 			"translatable": 0,
 			"insert_after": "imat_section",
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
+		},
+		{
+			"label": "VAT ID",
+			"fieldname": "vatid",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "item_group",
+			"fetch_from": "party_name.vatid",
+			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
 		}
 	]
 
