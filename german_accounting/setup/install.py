@@ -40,7 +40,7 @@ def get_custom_fields():
 		},
 		{
 			"label": "VAT ID",
-			"fieldname": "vatid",
+			"fieldname": "vat_id",
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
@@ -67,7 +67,7 @@ def get_custom_fields():
 		},
 		{
 			"label": "VAT ID",
-			"fieldname": "vatid",
+			"fieldname": "vat_id",
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
