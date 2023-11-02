@@ -23,7 +23,7 @@ def delete_custom_fields(custom_fields):
 
 
 def get_custom_fields():
-	custom_fields_transaction = [
+	custom_fields_quotation = [
 		{
 			"label": "IMAT Section",
 			"fieldname": "imat_section",
@@ -50,8 +50,35 @@ def get_custom_fields():
 		}
 	]
 
+	custom_fields_so_si = [
+		{
+			"label": "IMAT Section",
+			"fieldname": "imat_section",
+			"fieldtype": "Section Break",
+		},
+		{
+			"label": "Item Group",
+			"fieldname": "item_group",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "imat_section",
+			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
+		},
+		{
+			"label": "VAT ID",
+			"fieldname": "vatid",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "item_group",
+			"fetch_from": "customer.vatid",
+			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
+		}
+	]
+
 	return {
-		"Quotation": custom_fields_transaction,
-		"Sales Order": custom_fields_transaction,
-		"Sales Invoice": custom_fields_transaction
+		"Quotation": custom_fields_quotation,
+		"Sales Order": custom_fields_so_si,
+		"Sales Invoice": custom_fields_so_si
 	}
