@@ -25,8 +25,8 @@ def delete_custom_fields(custom_fields):
 def get_custom_fields():
 	custom_fields_quotation = [
 		{
-			"label": "IMAT Section",
-			"fieldname": "imat_section",
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
 			"fieldtype": "Section Break",
 		},
 		{
@@ -35,7 +35,7 @@ def get_custom_fields():
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "imat_section",
+			"insert_after": "german_accounting",
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
@@ -52,8 +52,8 @@ def get_custom_fields():
 
 	custom_fields_so_si = [
 		{
-			"label": "IMAT Section",
-			"fieldname": "imat_section",
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
 			"fieldtype": "Section Break",
 		},
 		{
@@ -62,7 +62,7 @@ def get_custom_fields():
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "imat_section",
+			"insert_after": "german_accounting",
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
@@ -79,8 +79,8 @@ def get_custom_fields():
 
 	custom_fields_country = [
 		{
-			"label": "IMAT",
-			"fieldname": "imat",
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
 			"fieldtype": "Section Break",
 		},
 		{
@@ -88,8 +88,12 @@ def get_custom_fields():
 			"fieldname": "tax_category",
 			"fieldtype": "Link",
 			"options": "Tax Category",
-			"insert_after": "imat",
-		}
+			"insert_after": "german_accounting",
+		},
+		{
+			"fieldtype": "Section Break",
+			"fieldname": "other_fields_sb",
+		},
 	]
 
 	return {
