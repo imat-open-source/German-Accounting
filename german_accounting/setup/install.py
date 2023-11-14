@@ -77,8 +77,24 @@ def get_custom_fields():
 		}
 	]
 
+	custom_fields_country = [
+		{
+			"label": "IMAT",
+			"fieldname": "imat",
+			"fieldtype": "Section Break",
+		},
+		{
+			"label": "Tax Category",
+			"fieldname": "tax_category",
+			"fieldtype": "Link",
+			"options": "Tax Category",
+			"insert_after": "imat",
+		}
+	]
+
 	return {
 		"Quotation": custom_fields_quotation,
 		"Sales Order": custom_fields_so_si,
-		"Sales Invoice": custom_fields_so_si
+		"Sales Invoice": custom_fields_so_si,
+		"Country": custom_fields_country
 	}
