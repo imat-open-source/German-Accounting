@@ -9,7 +9,10 @@
  "field_order": [
   "goods_item_group",
   "column_break_cx7ey",
-  "service_item_group"
+  "service_item_group",
+  "good_or_service_selection",
+  "section_break_who7o",
+  "mappings"
  ],
  "fields": [
   {
@@ -31,12 +34,30 @@
    "label": "Service Item Group",
    "options": "Item Group",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_who7o",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "mappings",
+   "fieldtype": "Table",
+   "label": "Mappings",
+   "options": "Mappings"
+  },
+  {
+   "description": "In case the amount of Goods and Service Item Groups are equal this case will be chosen.",
+   "fieldname": "good_or_service_selection",
+   "fieldtype": "Select",
+   "label": "Goods or Service Selection",
+   "options": "\nGoods Item Group\nService Item Group",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-10-28 13:20:29.747979",
+ "modified": "2023-11-14 17:01:07.799255",
  "modified_by": "Administrator",
  "module": "German Accounting",
  "name": "German Accounting Settings",

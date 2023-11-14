@@ -20,6 +20,9 @@ def validate_tax_category_fields(doc, method=None):
     if not german_accounting_settings.service_item_group:
         frappe.throw('Please set Service Item Group in German Accounting Settings')
 
+    if not german_accounting_settings.good_or_service_selection:
+        frappe.throw('Please set Goods or Service Selection in German Accounting Settings')
+
     goods_item_group_list = get_parent_and_descendants_item_group_list(german_accounting_settings.goods_item_group)
     services_item_group_list = get_parent_and_descendants_item_group_list(german_accounting_settings.service_item_group)
     # Here we go through the item table and count the amounts for the two categories
@@ -31,6 +34,10 @@ def validate_tax_category_fields(doc, method=None):
 
     if goods_amt_sum > services_amt_sum:
         doc.item_group = german_accounting_settings.goods_item_group
+
+    elif goods_amt_sum == services_amt_sum:
+        good_or_service_selection = frappe.scrub(german_accounting_settings.good_or_service_selection)
+        doc.item_group = german_accounting_settings.get(good_or_service_selection)
 
     else:
         doc.item_group = german_accounting_settings.service_item_group
