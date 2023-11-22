@@ -51,11 +51,12 @@ def get_custom_fields():
 		{
 			"label": "Customer Type",
 			"fieldname": "customer_type",
-			"fieldtype": "Data",
+			"fieldtype": "Select",
+			"options": "\nCompany\nIndividual",
+			"default": "",
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "vat_id",
-			"fetch_from": "party_name.customer_type",
 		}
 	]
 
