@@ -47,6 +47,15 @@ def get_custom_fields():
 			"insert_after": "item_group",
 			"fetch_from": "party_name.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
+		},
+		{
+			"label": "Customer Type",
+			"fieldname": "customer_type",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "vat_id",
+			"fetch_from": "party_name.customer_type",
 		}
 	]
 
@@ -74,6 +83,15 @@ def get_custom_fields():
 			"insert_after": "item_group",
 			"fetch_from": "customer.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
+		},
+		{
+			"label": "Customer Type",
+			"fieldname": "customer_type",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "vat_id",
+			"fetch_from": "customer.customer_type",
 		}
 	]
 
