@@ -25,8 +25,8 @@ def delete_custom_fields(custom_fields):
 def get_custom_fields():
 	custom_fields_quotation = [
 		{
-			"label": "IMAT Section",
-			"fieldname": "imat_section",
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
 			"fieldtype": "Section Break",
 		},
 		{
@@ -35,7 +35,7 @@ def get_custom_fields():
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "imat_section",
+			"insert_after": "german_accounting",
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
@@ -47,13 +47,22 @@ def get_custom_fields():
 			"insert_after": "item_group",
 			"fetch_from": "party_name.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
+		},
+		{
+			"label": "Customer Type",
+			"fieldname": "customer_type",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "vat_id",
+			"fetch_from": "party_name.customer_type",
 		}
 	]
 
 	custom_fields_so_si = [
 		{
-			"label": "IMAT Section",
-			"fieldname": "imat_section",
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
 			"fieldtype": "Section Break",
 		},
 		{
@@ -62,7 +71,7 @@ def get_custom_fields():
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "imat_section",
+			"insert_after": "german_accounting",
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
@@ -74,11 +83,40 @@ def get_custom_fields():
 			"insert_after": "item_group",
 			"fetch_from": "customer.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
+		},
+		{
+			"label": "Customer Type",
+			"fieldname": "customer_type",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "vat_id",
+			"fetch_from": "customer.customer_type",
 		}
+	]
+
+	custom_fields_country = [
+		{
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
+			"fieldtype": "Section Break",
+		},
+		{
+			"label": "Tax Category",
+			"fieldname": "tax_category",
+			"fieldtype": "Link",
+			"options": "Tax Category",
+			"insert_after": "german_accounting",
+		},
+		{
+			"fieldtype": "Section Break",
+			"fieldname": "other_fields_sb",
+		},
 	]
 
 	return {
 		"Quotation": custom_fields_quotation,
 		"Sales Order": custom_fields_so_si,
-		"Sales Invoice": custom_fields_so_si
+		"Sales Invoice": custom_fields_so_si,
+		"Country": custom_fields_country
 	}
