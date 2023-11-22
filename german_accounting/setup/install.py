@@ -1,10 +1,10 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
-
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 def after_migrate():
 	create_custom_fields(get_custom_fields())
-
+	create_property_setters()
 
 def before_uninstall():
 	delete_custom_fields(get_custom_fields())
@@ -123,3 +123,9 @@ def get_custom_fields():
 		"Sales Invoice": custom_fields_so_si,
 		"Country": custom_fields_country
 	}
+
+
+def create_property_setters():
+	# Address property setter
+	make_property_setter("Address", "tax_category", "fetch_from", "country.tax_category", "Small Text")
+	make_property_setter("Address", "tax_category", "reqd", 1, "Check")
