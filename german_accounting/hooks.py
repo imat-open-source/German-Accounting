@@ -39,7 +39,10 @@ doc_events = {
 	},
     "Sales Invoice": {
         "validate": "german_accounting.events.extended_tax_category.validate_tax_category_fields"
-	}
+	},
+    "Address": {
+        "validate": "german_accounting.events.address.set_tax_category"
+    }
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
