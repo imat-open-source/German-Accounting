@@ -30,7 +30,7 @@ app_license = "MIT"
 
 # include js in doctype views
 doctype_js = {
-	"Address": "public/js/address.js"
+    "Quotation": "public/js/quotation.js"
 }
 
 doc_events = {
