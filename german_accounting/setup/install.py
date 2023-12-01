@@ -1,6 +1,6 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
-
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 def after_migrate():
 	create_custom_fields(get_custom_fields())
@@ -45,17 +45,17 @@ def get_custom_fields():
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "item_group",
-			"fetch_from": "party_name.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
 		},
 		{
 			"label": "Customer Type",
 			"fieldname": "customer_type",
-			"fieldtype": "Data",
+			"fieldtype": "Select",
+			"options": "\nCompany\nIndividual",
+			"default": "",
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "vat_id",
-			"fetch_from": "party_name.customer_type",
 		}
 	]
 
@@ -81,17 +81,17 @@ def get_custom_fields():
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "item_group",
-			"fetch_from": "customer.vatid",
 			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
 		},
 		{
 			"label": "Customer Type",
 			"fieldname": "customer_type",
-			"fieldtype": "Data",
+			"fieldtype": "Select",
+			"options": "\nCompany\nIndividual",
+			"default": "",
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "vat_id",
-			"fetch_from": "customer.customer_type",
 		}
 	]
 

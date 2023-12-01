@@ -34,7 +34,7 @@
    "reqd": 1
   },
   {
-   "description": "In case the amount of Goods and Service Item Groups are equal this case will be chosen.",
+   "description": "In case the amount of Goods and Service Items are equal this case will be chosen.",
    "fieldname": "good_or_service_selection",
    "fieldtype": "Select",
    "label": "Goods or Service Selection",

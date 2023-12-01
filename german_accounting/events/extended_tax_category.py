@@ -7,6 +7,9 @@ def validate_tax_category_fields(doc, method=None):
     goods_amt_sum = 0.0
     services_amt_sum = 0.0
 
+
+    set_customer_type(doc)
+
     def get_parent_and_descendants_item_group_list(item_group):
         item_groups = [item_group]
         descendants_item_group = get_descendants_of("Item Group", item_group)
@@ -41,3 +44,19 @@ def validate_tax_category_fields(doc, method=None):
 
     else:
         doc.item_group = german_accounting_settings.service_item_group
+
+
+def set_customer_type(doc):
+    if doc.doctype == 'Quotation':
+        if doc.quotation_to:
+            if doc.quotation_to == 'Customer' and doc.party_name:
+                doc.customer_type = frappe.get_cached_value('Customer', doc.party_name, 'customer_type')
+            
+            elif doc.quotation_to == 'Lead' and doc.party_name:
+                organization_lead = frappe.get_cached_value('Lead', doc.party_name, 'organization_lead')
+                if organization_lead:
+                    doc.customer_type = 'Company'
+                else:
+                    doc.customer_type = 'Individual'
+    elif doc.doctype in ['Sales Order', 'Sales Invoice']:
+        doc.customer_type = frappe.get_cached_value('Customer', doc.customer, 'customer_type')
