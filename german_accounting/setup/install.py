@@ -114,9 +114,20 @@ def get_custom_fields():
 		},
 	]
 
+	custom_fields_item_group = [
+		{
+			"label": "Custom Taxes",
+			"fieldname": "custom_taxes",
+			"fieldtype": "Table",
+			"options": "Custom Item Tax",
+			"insert_after": "taxes"
+		}	
+	]
+
 	return {
 		"Quotation": custom_fields_quotation,
 		"Sales Order": custom_fields_so_si,
+		"Item Group": custom_fields_item_group,
 		"Sales Invoice": custom_fields_so_si,
 		"Country": custom_fields_country
 	}
