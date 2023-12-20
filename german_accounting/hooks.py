@@ -4,7 +4,7 @@ app_name = "german_accounting"
 app_title = "German Accounting"
 app_publisher = "phamos.eu"
 app_description = "ERPNext Enhancement for IMAT"
-app_email = "furqan.asghar@phamos.eu"
+app_email = "support@phamos.eu"
 app_license = "MIT"
 
 # Includes in <head>
