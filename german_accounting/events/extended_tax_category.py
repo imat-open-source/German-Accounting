@@ -44,30 +44,36 @@ def validate_tax_category_fields(doc, method=None):
     else:
         doc.item_group = german_accounting_settings.service_item_group
 
-    setting_tax_defaults()
+    setting_tax_defaults(doc)
 
 
 def setting_tax_defaults(doc):
     if doc.item_group and doc.tax_category:
         is_vat_applicable = True if doc.vat_id else False
-        item_tax_template = frappe.get_cached_doc('Custom Item Tax', {'parenttype': 'Item Group', 'parent': doc.item_group, 'tax_category': doc.tax_category, 'is_vat_applicable': is_vat_applicable})
-        if item_tax_template:
-            frappe.msgprint('applying: ' + item_tax_template.item_tax_template + ' on all items')
+        item_tax_template = frappe.get_cached_doc('Custom Item Tax', 
+                                {
+                                    'parent': doc.item_group, 
+                                    'parenttype': 'Item Group',
+                                    'tax_category': doc.tax_category, 
+                                    'customer_type': doc.customer_type,
+                                    'is_vat_applicable': is_vat_applicable
+                                }
+                            )
 
+        if item_tax_template:
             for item in doc.items:
                 if item_tax_template.item_tax_template:
-                    item.db_set('item_tax_template', item_tax_template.item_tax_template)
+                    item.item_tax_template = item_tax_template.item_tax_template
 
                 if doc.doctype == "Sales Invoice":
                     if item_tax_template.income_account:
-                        item.db_set('income_account', item_tax_template.income_account)
+                        item.income_account = item_tax_template.income_account
             
-            if doc.doctype == "Sales Invoice":
-                if item_tax_template.sales_taxes_and_charges_template:
-                    doc.taxes_and_charges = item_tax_template.sales_taxes_and_charges_template
+            if item_tax_template.sales_taxes_and_charges_template:
+                doc.taxes_and_charges = item_tax_template.sales_taxes_and_charges_template
 
-                doc.run_method("calculate_taxes_and_totals")
-                # doc.save()
+            doc.run_method("set_missing_values")
+            doc.run_method("calculate_taxes_and_totals")
             
         else:
             frappe.msgprint('Please set Custom Item Tax setting for item group ' + doc.item_group + ' and tax category ' + doc.tax_category)
