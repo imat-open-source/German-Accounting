@@ -50,17 +50,16 @@ def validate_tax_category_fields(doc, method=None):
 def setting_tax_defaults(doc):
     if doc.item_group and doc.tax_category:
         is_vat_applicable = True if doc.vat_id else False
-        item_tax_template = frappe.get_cached_doc('Custom Item Tax', 
-                                {
-                                    'parent': doc.item_group, 
-                                    'parenttype': 'Item Group',
-                                    'tax_category': doc.tax_category, 
-                                    'customer_type': doc.customer_type,
-                                    'is_vat_applicable': is_vat_applicable
-                                }
-                            )
+        filters = {
+            'parent': doc.item_group, 
+            'parenttype': 'Item Group',
+            'tax_category': doc.tax_category, 
+            'customer_type': doc.customer_type,
+            'is_vat_applicable': is_vat_applicable
+        }
 
-        if item_tax_template:
+        if frappe.db.exists('Custom Item Tax', filters):
+            item_tax_template = frappe.get_cached_doc('Custom Item Tax', filters)
             for item in doc.items:
                 if item_tax_template.item_tax_template:
                     item.item_tax_template = item_tax_template.item_tax_template
@@ -76,7 +75,7 @@ def setting_tax_defaults(doc):
             doc.run_method("calculate_taxes_and_totals")
             
         else:
-            frappe.msgprint('Please set Custom Item Tax setting for item group ' + doc.item_group + ' and tax category ' + doc.tax_category)
+            frappe.msgprint('Please set Custom Item Tax in {0} for tax category <b>{1}</b>'.format(frappe.get_desk_link('Item Group', doc.item_group), doc.tax_category))
 
 def set_customer_type(doc):
     if doc.doctype == 'Quotation':
