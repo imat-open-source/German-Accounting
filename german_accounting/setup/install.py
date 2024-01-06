@@ -116,10 +116,10 @@ def get_custom_fields():
 
 	custom_fields_item_group = [
 		{
-			"label": "Germany Accounting Taxes",
+			"label": "German Accounting Taxes",
 			"fieldname": "german_accounting_taxes",
 			"fieldtype": "Table",
-			"options": "Germany Accounting Tax Defaults",
+			"options": "German Accounting Tax Defaults",
 			"insert_after": "taxes"
 		}	
 	]
