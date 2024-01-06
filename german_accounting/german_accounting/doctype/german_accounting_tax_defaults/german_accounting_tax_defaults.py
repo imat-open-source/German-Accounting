@@ -4,5 +4,5 @@
 # import frappe
 from frappe.model.document import Document
 
-class CustomItemTax(Document):
+class GermanAccountingTaxDefaults(Document):
 	pass
