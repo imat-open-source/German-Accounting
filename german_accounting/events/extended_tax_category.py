@@ -76,7 +76,7 @@ def setting_tax_defaults(doc):
             doc.run_method("calculate_taxes_and_totals")
             
         else:
-            frappe.msgprint('Please set Germany Accounting Tax Defaults in {0} for tax category <b>{1}</b>'.format(frappe.get_desk_link('Item Group', doc.item_group), doc.tax_category))
+            frappe.msgprint('Please set Germany Accounting Taxes in {0} for tax category <b>{1}</b>'.format(frappe.get_desk_link('Item Group', doc.item_group), doc.tax_category))
 
 def set_customer_type(doc):
     if doc.doctype == 'Quotation':
