@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe.utils import flt
 from frappe.utils.nestedset import get_descendants_of
 
@@ -74,9 +75,18 @@ def setting_tax_defaults(doc):
 
             doc.run_method("set_missing_values")
             doc.run_method("calculate_taxes_and_totals")
-            
         else:
-            frappe.msgprint('Please set German Accounting Tax Defaults in {0} for Tax Category <b>{1}</b>'.format(frappe.get_desk_link('Item Group', doc.item_group), doc.tax_category))
+            for item in doc.items:
+                if doc.doctype == "Sales Invoice":
+                    item.income_account = ""
+                
+                item.item_tax_template = ""
+
+            doc.taxes = []
+            doc.taxes_and_charges = ""
+            doc.run_method("set_missing_values")
+            doc.run_method("calculate_taxes_and_totals")
+            frappe.msgprint(_("This case is not reflected in the table (German Accounting Tax Defaults) in {0}. Please check the fields tax_category, customer_type, is_vat_applicable and add your combination to the table.").format(frappe.get_desk_link("Item Group ", doc.item_group)))
 
 def set_customer_type(doc):
     if doc.doctype == 'Quotation':
