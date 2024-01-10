@@ -39,8 +39,8 @@ def get_custom_fields():
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
-			"label": "VAT ID",
-			"fieldname": "vat_id",
+			"label": "Tax Id",
+			"fieldname": "tax_id",
 			"fieldtype": "Data",
 			"read_only": 1,
 			"translatable": 0,
@@ -55,7 +55,7 @@ def get_custom_fields():
 			"default": "",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "vat_id",
+			"insert_after": "tax_id",
 		}
 	]
 
@@ -75,15 +75,6 @@ def get_custom_fields():
 			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
 		},
 		{
-			"label": "VAT ID",
-			"fieldname": "vat_id",
-			"fieldtype": "Data",
-			"read_only": 1,
-			"translatable": 0,
-			"insert_after": "item_group",
-			"description": "This can be a validation in the backround that will check if the `vatid` field in Customer/Address is set."
-		},
-		{
 			"label": "Customer Type",
 			"fieldname": "customer_type",
 			"fieldtype": "Select",
@@ -91,7 +82,7 @@ def get_custom_fields():
 			"default": "",
 			"read_only": 1,
 			"translatable": 0,
-			"insert_after": "vat_id",
+			"insert_after": "german_accounting",
 		}
 	]
 

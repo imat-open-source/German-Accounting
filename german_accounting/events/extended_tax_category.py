@@ -49,8 +49,11 @@ def validate_tax_category_fields(doc, method=None):
 
 
 def setting_tax_defaults(doc):
+    if doc.doctype == 'Quotation' and doc.quotation_to == 'Customer' and doc.party_name:
+        doc.tax_id = frappe.get_cached_value("Customer", doc.party_name, "tax_id")
+
     if doc.item_group and doc.tax_category:
-        is_vat_applicable = True if doc.vat_id else False
+        is_vat_applicable = True if doc.tax_id else False
         filters = {
             'parent': doc.item_group, 
             'parenttype': 'Item Group',
@@ -86,7 +89,7 @@ def setting_tax_defaults(doc):
             doc.taxes_and_charges = ""
             doc.run_method("set_missing_values")
             doc.run_method("calculate_taxes_and_totals")
-            frappe.msgprint(_("This case is not reflected in the table (German Accounting Tax Defaults) in {0}. Please check the fields tax_category, customer_type, is_vat_applicable and add your combination to the table.").format(frappe.get_desk_link("Item Group ", doc.item_group)))
+            frappe.msgprint(_("This case is not reflected in the table (German Accounting Tax Defaults) in {0}. Please check the fields tax_category, customer_type, is_vat_applicable and add your combination to the table.").format(frappe.get_desk_link("Item Group", doc.item_group)))
 
 def set_customer_type(doc):
     if doc.doctype == 'Quotation':
