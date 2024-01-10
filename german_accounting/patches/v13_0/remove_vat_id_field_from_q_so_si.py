@@ -1,9 +1,6 @@
 import frappe
 
 def execute():
-	# frappe.reload_doc("accounts", "doctype", "tax_category")
-	# frappe.reload_doc("stock", "doctype", "item_manufacturer")
-
 	fields_to_delete = [
 		{
 			"dt": "Quotation",
