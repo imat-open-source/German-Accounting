@@ -1,0 +1,1 @@
+german_accounting.patches.v13_0.remove_vat_id_field_from_q_so_si
