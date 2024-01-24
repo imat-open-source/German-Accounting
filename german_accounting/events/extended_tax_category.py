@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe.utils import flt
 from frappe.utils.nestedset import get_descendants_of
 
@@ -6,7 +7,6 @@ from frappe.utils.nestedset import get_descendants_of
 def validate_tax_category_fields(doc, method=None):
     goods_amt_sum = 0.0
     services_amt_sum = 0.0
-
 
     set_customer_type(doc)
 
@@ -45,6 +45,51 @@ def validate_tax_category_fields(doc, method=None):
     else:
         doc.item_group = german_accounting_settings.service_item_group
 
+    setting_tax_defaults(doc)
+
+
+def setting_tax_defaults(doc):
+    if doc.doctype == 'Quotation' and doc.quotation_to == 'Customer' and doc.party_name:
+        doc.tax_id = frappe.get_cached_value("Customer", doc.party_name, "tax_id")
+
+    if doc.item_group and doc.tax_category:
+        is_vat_applicable = True if doc.tax_id else False
+        filters = {
+            'parent': doc.item_group, 
+            'parenttype': 'Item Group',
+            'tax_category': doc.tax_category, 
+            'customer_type': doc.customer_type,
+            'is_vat_applicable': is_vat_applicable
+        }
+
+        if frappe.db.exists('German Accounting Tax Defaults', filters):
+            item_tax_template = frappe.get_cached_doc('German Accounting Tax Defaults', filters)
+            frappe.msgprint(item_tax_template.item_tax_template)
+            for item in doc.items:
+                if item_tax_template.item_tax_template:
+                    item.item_tax_template = item_tax_template.item_tax_template
+
+                if doc.doctype == "Sales Invoice":
+                    if item_tax_template.income_account:
+                        item.income_account = item_tax_template.income_account
+            
+            if item_tax_template.sales_taxes_and_charges_template:
+                doc.taxes_and_charges = item_tax_template.sales_taxes_and_charges_template
+
+            doc.run_method("set_missing_values")
+            doc.run_method("calculate_taxes_and_totals")
+        else:
+            for item in doc.items:
+                if doc.doctype == "Sales Invoice":
+                    item.income_account = ""
+                
+                item.item_tax_template = ""
+
+            doc.taxes = []
+            doc.taxes_and_charges = ""
+            doc.run_method("set_missing_values")
+            doc.run_method("calculate_taxes_and_totals")
+            frappe.msgprint(_("This case is not reflected in the table (German Accounting Tax Defaults) in {0}. Please check the fields tax_category, customer_type, is_vat_applicable and add your combination to the table.").format(frappe.get_desk_link("Item Group", doc.item_group)))
 
 def set_customer_type(doc):
     if doc.doctype == 'Quotation':
