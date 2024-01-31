@@ -75,6 +75,7 @@ def setting_tax_defaults(doc):
             
             if item_tax_template.sales_taxes_and_charges_template:
                 doc.taxes_and_charges = item_tax_template.sales_taxes_and_charges_template
+                doc.taxes = []
 
             doc.run_method("set_missing_values")
             doc.run_method("calculate_taxes_and_totals")
