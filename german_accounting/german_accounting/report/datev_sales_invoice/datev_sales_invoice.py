@@ -119,8 +119,8 @@ def get_columns(filters):
 
 def get_conditions(filters):
     conditions = ""
-    if filters.get("customer"):
-        conditions += " AND si.customer IN %(customer)s"
+    # if filters.get("customer"):
+    #     conditions += " AND si.customer IN %(customer)s"
     if filters.get("posting_date"):
         conditions += " AND si.posting_date = %(posting_date)s"
     return conditions
@@ -133,7 +133,7 @@ def get_data(filters):
     res = frappe.db.sql(
         """ SELECT si.name, si.posting_date, si.customer, si.debit_to, ad.country, si.currency, si.grand_total, si.is_return, si.remarks
             FROM `tabSales Invoice` si, `tabAddress` ad
-            WHERE si.shipping_address_name=ad.name AND si.docstatus != 2 %s  """% conditions,filters, as_dict = 1)
+            WHERE si.shipping_address_name=ad.name %s  """% conditions,filters, as_dict = 1)
 
     for d in res:
         line_item_details = frappe.db.sql(""" SELECT sii.income_account, ttd.tax_rate
