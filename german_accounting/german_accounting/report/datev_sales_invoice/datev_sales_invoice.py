@@ -22,9 +22,9 @@ def get_columns(filters):
             "width": 150
         },
         {
-            "label": _("DC"),
+            "label": _("SH"),
             "fieldtype": "Data",
-            "fieldname": "dc",
+            "fieldname": "sh",
             "width": 50
         },
         {
@@ -145,10 +145,21 @@ def get_data(filters):
             income_account = line_item_details[0].income_account
             tax_percentage = line_item_details[0].tax_rate
 
-        row = {"voucher_type": "R", "dc": "C" if d.is_return == 0 else "D", "voucher_no": d.name, "posting_date": d.posting_date, 
-                "short_date": d.posting_date.strftime("%d%m"), "customer": d.customer, "debit_to": d.debit_to, "income_account": income_account,
-                "country": d.country, "currency": d.currency, "journal_text": d.remarks, "export_date": today(),
-                "total": round(d.grand_total, 2), "total_datev": str(d.grand_total).replace(".","").replace(",",""), "tax_percentage": tax_percentage}
+        row = {"voucher_type": "R", 
+                "sh": "S" if d.is_return == 0 else "H", 
+                "voucher_no": d.name, 
+                "posting_date": d.posting_date, 
+                "short_date": d.posting_date.strftime("%d%m"), 
+                "customer": d.customer, 
+                "debit_to": d.debit_to, 
+                "income_account": income_account,
+                "country": d.country, 
+                "currency": d.currency, 
+                "journal_text": d.remarks, 
+                "export_date": today(),
+                "total": round(d.grand_total, 2), 
+                "total_datev": str(d.grand_total).replace(".","").replace(",",""), 
+                "tax_percentage": tax_percentage}
 
         data.append(row)
 
