@@ -13,10 +13,18 @@ frappe.query_reports["DATEV Sales Invoice"] = {
 		// 	}
         // },
         {
-            fieldname: 'posting_date',
-            label: __('Posting Date'),
-            fieldtype: 'Date',
-            default: frappe.datetime.get_today()
+            "fieldname": 'from_date',
+            "label": __('From'),
+            "fieldtype": 'Date',
+            "default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
+			"reqd": 1,
+			"width": "60px"
+        },
+        {
+            "fieldname": 'to_date',
+            "label": __('To'),
+            "fieldtype": 'Date',
+            "default": frappe.datetime.get_today()
         }
     ]
 };

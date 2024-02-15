@@ -3,7 +3,8 @@
 
 import frappe
 from frappe import _, msgprint
-from frappe.utils import today
+from frappe.utils import today, now_datetime
+from datetime import datetime
 
 
 def execute(filters=None):
@@ -22,14 +23,14 @@ def get_columns(filters):
             "width": 150
         },
         {
-            "label": _("SH"),
+            "label": _("DC"),
             "fieldtype": "Data",
-            "fieldname": "sh",
+            "fieldname": "dc",
             "width": 50
         },
         {
             "label": _("Total"),
-            "fieldtype": "Currency",
+            "fieldtype": "Data",
             "fieldname": "total",
             "width": 100
         },
@@ -51,7 +52,7 @@ def get_columns(filters):
             "fieldtype": "Link",
             "fieldname": "voucher_no",
             "options": "Sales Invoice",
-            "width": 100
+            "width": 200
         },
         {
             "label": _("Posting Date"),
@@ -89,14 +90,14 @@ def get_columns(filters):
             "label": _("Journal Text"),
             "fieldtype": "Small Text",
             "fieldname": "journal_text",
-            "width": 100
+            "width": 200
         },
         {
 
             "label": _("Tax Percentage"),
-            "fieldtype": "Percent",
+            "fieldtype": "Data",
             "fieldname": "tax_percentage",
-            "width": 100
+            "width": 150
         },
         {
             "label": _("Currency"),
@@ -107,10 +108,9 @@ def get_columns(filters):
         },
         {
             "label": _("Export Date"),
-            "fieldtype": "Date",
+            "fieldtype": "Data",
             "fieldname": "export_date",
-            "default": today(),
-            "width": 150
+            "width": 250
         }
     ]
 
@@ -122,17 +122,18 @@ def get_conditions(filters):
     # if filters.get("customer"):
     #     conditions += " AND si.customer IN %(customer)s"
     if filters.get("posting_date"):
-        conditions += " AND si.posting_date = %(posting_date)s"
+        conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s"
     return conditions
 
 
 def get_data(filters):
+
     data = []
     conditions = get_conditions(filters)
     res = frappe.db.sql(
-        """ SELECT si.name, si.posting_date, si.customer, si.debit_to, ad.country, si.currency, si.grand_total, si.is_return, si.remarks
-            FROM `tabSales Invoice` si, `tabAddress` ad
-            WHERE si.shipping_address_name=ad.name %s  """% conditions,filters, as_dict = 1)
+        """ SELECT si.name, si.posting_date, si.customer, si.debit_to, si.currency, si.grand_total, si.is_return, si.remarks, co.code
+            FROM `tabSales Invoice` si, `tabAddress` ad, `tabCountry` co
+            WHERE si.shipping_address_name=ad.name AND ad.country=co.name %s  """% conditions,filters, as_dict = 1)
 
     for d in res:
         line_item_details = frappe.db.sql(""" SELECT sii.income_account, ttd.tax_rate
@@ -143,21 +144,21 @@ def get_data(filters):
         if len(line_item_details) != 0:
             income_account = line_item_details[0].income_account
             tax_percentage = line_item_details[0].tax_rate
-
+        
         row = {"voucher_type": "R", 
-                "sh": "S" if d.is_return == 0 else "H", 
+                "dc": "H" if d.is_return == 0 else "S", 
                 "voucher_no": d.name, 
                 "posting_date": d.posting_date, 
                 "short_date": d.posting_date.strftime("%d%m"), 
                 "customer": d.customer, 
-                "debit_to": d.debit_to, 
-                "income_account": income_account,
-                "country": d.country, 
+                "debit_to": d.debit_to.split("-")[0], 
+                "income_account": income_account.split("-")[0],
+                "country": d.code, 
                 "currency": d.currency, 
                 "journal_text": d.remarks, 
-                "export_date": today(),
-                "total": round(d.grand_total, 2), 
-                "total_datev": str(d.grand_total).replace(".","").replace(",",""), 
+                "export_date": now_datetime().strftime("%Y-%m-%d %H:%M:%S"),
+                "total": str("%.2f" % d.grand_total), 
+                "total_datev": str(("%.2f" % d.grand_total)).replace(",","").replace(".",""), 
                 "tax_percentage": tax_percentage}
 
         data.append(row)
