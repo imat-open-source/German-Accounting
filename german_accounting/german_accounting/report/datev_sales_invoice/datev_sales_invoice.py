@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _, msgprint
-from frappe.utils import today, now_datetime
+from frappe.utils import today, now_datetime, get_first_day, get_last_day
 from datetime import datetime
 
 
@@ -20,7 +20,7 @@ def get_columns(filters):
             "label": _("Voucher Type"),
             "fieldtype": "Data",
             "fieldname": "voucher_type",
-            "width": 150
+            "width": 110
         },
         {
             "label": _("DC"),
@@ -30,7 +30,7 @@ def get_columns(filters):
         },
         {
             "label": _("Total"),
-            "fieldtype": "Data",
+            "fieldtype": "Currency",
             "fieldname": "total",
             "width": 100
         },
@@ -38,79 +38,79 @@ def get_columns(filters):
             "label": _("Total DATEV"),
             "fieldtype": "Data",
             "fieldname": "total_datev",
-            "width": 100
+            "width": 110
         },
         {
             "label": _("Income Account"),
             "fieldtype": "Link",
             "fieldname": "income_account",
             "options": "Account",
-            "width": 250
+            "width": 130
         },
         {
             "label": _("Voucher No"),
             "fieldtype": "Link",
             "fieldname": "voucher_no",
             "options": "Sales Invoice",
-            "width": 200
+            "width": 180
         },
         {
             "label": _("Posting Date"),
             "fieldtype": "Date",
             "fieldname": "posting_date",
-            "width": 150
+            "width": 110
         },
         {
-            "label": _("Shortdate"),
+            "label": _("Short Date"),
             "fieldtype": "Data",
             "fieldname": "short_date",
-            "width": 150
+            "width": 110
         },
         {
             "label": _("Debitor No"),
             "fieldtype": "Link",
             "fieldname": "debit_to",
             "options": "Account",
-            "width": 250
+            "width": 120
         },
         {
             "label": _("Debitor No DATEV"),
             "fieldtype": "Data",
             "fieldname": "debit_to_datev",
-            "width": 250
+            "width": 140
         },
         {
             "label": _("Country"),
             "fieldtype": "Link",
             "fieldname": "country",
             "options": "Country",
-            "width": 100
+            "width": 80
         },
         {
             "label": _("Journal Text"),
             "fieldtype": "Small Text",
             "fieldname": "journal_text",
-            "width": 200
+            "width": 150
         },
         {
 
             "label": _("Tax Percentage"),
             "fieldtype": "Data",
             "fieldname": "tax_percentage",
-            "width": 150
+            "width": 130
         },
         {
             "label": _("Currency"),
             "fieldtype": "Link",
             "fieldname": "currency",
             "options": "Currency",
-            "width": 100
+            "width": 90
         },
         {
             "label": _("Export Date"),
             "fieldtype": "Data",
             "fieldname": "export_date",
-            "width": 250
+            "width": 180
         }
     ]
 
@@ -119,19 +119,21 @@ def get_columns(filters):
 
 def get_conditions(filters):
     conditions = ""
-    # if filters.get("customer"):
-    #     conditions += " AND si.customer IN %(customer)s"
     if filters.get("posting_date"):
         conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s"
+
+    if filters.get("month"):
+        filters["month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
+                        "Dec"].index(filters.month) + 1
+        conditions += "AND month(si.posting_date) = %(month)s"
     return conditions
 
 
 def get_data(filters):
-
     data = []
     conditions = get_conditions(filters)
     res = frappe.db.sql(
-        """ SELECT si.name, si.posting_date, si.customer, si.debit_to, si.currency, si.grand_total, si.is_return, si.remarks, co.code
+        """ SELECT si.name, si.posting_date, si.customer, si.debit_to, si.currency, si.grand_total, si.is_return, si.remarks, co.code, ad.country
             FROM `tabSales Invoice` si, `tabAddress` ad, `tabCountry` co
             WHERE si.shipping_address_name=ad.name AND ad.country=co.name %s  """% conditions,filters, as_dict = 1)
 
@@ -144,20 +146,31 @@ def get_data(filters):
         if len(line_item_details) != 0:
             income_account = line_item_details[0].income_account
             tax_percentage = line_item_details[0].tax_rate
+
+        ### Debitor No DATEV 
+        deb_no_datev = d.debit_to.split("-")[0]
+        if len(deb_no_datev) < 9:
+            n = 9 - len(deb_no_datev)
+            zeros = '0' * n
+            deb_no_datev += zeros
+        # while len(deb_no_datev) <= 9:
+        #     deb_no_datev += '0'
+
         
         row = {"voucher_type": "R", 
                 "dc": "H" if d.is_return == 0 else "S", 
                 "voucher_no": d.name, 
                 "posting_date": d.posting_date, 
                 "short_date": d.posting_date.strftime("%d%m"), 
-                "customer": d.customer, 
-                "debit_to": d.debit_to.split("-")[0], 
+                # "customer": d.customer, 
+                "debit_to": d.debit_to.split("-")[0],
+                "debit_to_datev": deb_no_datev,
                 "income_account": income_account.split("-")[0],
                 "country": d.code, 
                 "currency": d.currency, 
-                "journal_text": d.remarks, 
+                "journal_text": d.customer if d.country == 'Germany' else d.code + ", " + d.customer, 
                 "export_date": now_datetime().strftime("%Y-%m-%d %H:%M:%S"),
-                "total": str("%.2f" % d.grand_total), 
+                "total": d.grand_total, 
                 "total_datev": str(("%.2f" % d.grand_total)).replace(",","").replace(".",""), 
                 "tax_percentage": tax_percentage}
 

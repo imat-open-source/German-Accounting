@@ -13,6 +13,15 @@ frappe.query_reports["DATEV Sales Invoice"] = {
 		// 	}
         // },
         {
+            "fieldname": "month",
+            "label": __("Month"),
+            "fieldtype": "Select",
+            "options": "\nJan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec",
+            "default": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
+                "Dec"
+            ][frappe.datetime.str_to_obj(frappe.datetime.get_today()).getMonth()],
+        },
+        {
             "fieldname": 'from_date',
             "label": __('From'),
             "fieldtype": 'Date',
