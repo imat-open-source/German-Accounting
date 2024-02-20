@@ -42,9 +42,9 @@ def get_columns(filters):
         },
         {
             "label": _("Income Account"),
-            "fieldtype": "Link",
+            "fieldtype": "Data",
             "fieldname": "income_account",
-            "options": "Account",
+            # "options": "Account",
             "width": 130
         },
         {
@@ -68,9 +68,9 @@ def get_columns(filters):
         },
         {
             "label": _("Debitor No"),
-            "fieldtype": "Link",
+            "fieldtype": "Data",
             "fieldname": "debit_to",
-            "options": "Account",
+            # "options": "Account",
             "width": 120
         },
         {
@@ -148,7 +148,7 @@ def get_data(filters):
             tax_percentage = line_item_details[0].tax_rate
 
         ### Debitor No DATEV 
-        deb_no_datev = d.debit_to.split("-")[0]
+        deb_no_datev = d.debit_to.split("-")[0].replace(" ", "")
         if len(deb_no_datev) < 9:
             n = 9 - len(deb_no_datev)
             zeros = '0' * n
