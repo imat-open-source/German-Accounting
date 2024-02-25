@@ -1,0 +1,60 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-02-21 10:34:59.488517",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sales_invoice_field_id",
+  "customer_field_id",
+  "is_empty_column",
+  "column_break_f7yzg",
+  "description"
+ ],
+ "fields": [
+  {
+   "columns": 3,
+   "fieldname": "customer_field_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Customer Field ID"
+  },
+  {
+   "columns": 3,
+   "default": "0",
+   "fieldname": "is_empty_column",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Empty Column?"
+  },
+  {
+   "fieldname": "column_break_f7yzg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "columns": 3,
+   "fieldname": "sales_invoice_field_id",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Sales Invoice Field ID"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-02-23 06:09:41.974050",
+ "modified_by": "Administrator",
+ "module": "German Accounting",
+ "name": "DATEV Export Mapping Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

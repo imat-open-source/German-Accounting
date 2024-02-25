@@ -5,9 +5,12 @@ import frappe
 from frappe import _, msgprint
 from frappe.utils import today, now_datetime, get_first_day, get_last_day
 from datetime import datetime
+import json
 
-
+@frappe.whitelist()
 def execute(filters=None):
+    if isinstance(filters, str):
+        filters = json.loads(filters)
     filters = frappe._dict(filters or {})
     columns = get_columns(filters)
     data = get_data(filters)
@@ -133,7 +136,7 @@ def get_data(filters):
     data = []
     conditions = get_conditions(filters)
     res = frappe.db.sql(
-        """ SELECT si.name, si.posting_date, si.customer, si.debit_to, si.currency, si.grand_total, si.is_return, si.remarks, co.code, ad.country
+        """ SELECT si.*, co.code, ad.country
             FROM `tabSales Invoice` si, `tabAddress` ad, `tabCountry` co
             WHERE si.shipping_address_name=ad.name AND ad.country=co.name %s  """% conditions,filters, as_dict = 1)
 
