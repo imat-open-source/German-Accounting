@@ -68,7 +68,12 @@ frappe.ui.form.on('DATEV Export Mapping Template', {
 
 			frappe.tools.downloadify(result, null, "DATEV SI Report");
 
-
+			// var t = frappe.urllib.get_full_url(`/api/method/frappe.utils.print_format.download_pdf?
+			// 		doctype=${frm.doc.doctype}
+			// 		&name=${frm.doc.name}
+			// 		&format=standard
+			// 		&lang=en`)
+			// 		console.log(t)
 		}, __('Actions'));
 	}
 });

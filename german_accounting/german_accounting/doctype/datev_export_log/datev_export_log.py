@@ -6,10 +6,9 @@ from frappe.model.document import Document
 from frappe.utils import today, now_datetime
 from datetime import datetime, date
 
-
-class DATEVExportMappingTemplate(Document):
-	def autoname(self):
-		self.name = "DATEV-Export-" + self.month + "-" + str(date.today().year)
+class DATEVExportLog(Document):
+	# def autoname(self):
+	# 	self.name = "DATEV-Export-" + self.month + "-" + str(date.today().year)
 
 	def validate(self):
 		now = datetime.now()

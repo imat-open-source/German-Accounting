@@ -126,8 +126,8 @@ def get_conditions(filters):
         conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s"
 
     if filters.get("month"):
-        filters["month"] = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
-                        "Dec"].index(filters.month) + 1
+        filters["month"] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+                "December"].index(filters.month) + 1
         conditions += "AND month(si.posting_date) = %(month)s"
     return conditions
 
