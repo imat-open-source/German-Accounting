@@ -1,44 +1,56 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-02-23 13:48:33.604070",
+ "autoname": "DATEV-Export-.month.-.year.-.####",
+ "creation": "2024-02-26 13:07:22.730340",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "month",
+  "exported_on",
   "datev_export_mapping",
-  "exported_on"
+  "year"
  ],
  "fields": [
   {
    "fieldname": "month",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "in_standard_filter": 1,
    "label": "Month",
-   "options": "\nJan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec"
-  },
-  {
-   "fieldname": "datev_export_mapping",
-   "fieldtype": "Link",
-   "label": "DATEV Export Mapping",
-   "options": "DATEV Export Mapping"
+   "reqd": 1
   },
   {
    "fieldname": "exported_on",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Exported On",
-   "read_only": 1
+   "reqd": 1
+  },
+  {
+   "fieldname": "datev_export_mapping",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "DATEV Export Mapping",
+   "options": "DATEV Export Mapping",
+   "reqd": 1
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Year"
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-25 17:51:14.596764",
+ "modified": "2024-02-26 13:51:51.244655",
  "modified_by": "Administrator",
  "module": "German Accounting",
- "name": "DATEV Export Mapping Template",
+ "name": "DATEV Export Log",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

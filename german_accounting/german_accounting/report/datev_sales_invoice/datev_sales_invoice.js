@@ -4,21 +4,13 @@
 
 frappe.query_reports["DATEV Sales Invoice"] = {
 	"filters": [
-        // {
-        //     "fieldname": "customer",
-		// 	"label": __("Customer"),
-		// 	"fieldtype": "MultiSelectList",
-		// 	get_data: function(txt) {
-		// 		return frappe.db.get_link_options("Customer", txt);
-		// 	}
-        // },
         {
             "fieldname": "month",
             "label": __("Month"),
             "fieldtype": "Select",
-            "options": "\nJan\nFeb\nMar\nApr\nMay\nJun\nJul\nAug\nSep\nOct\nNov\nDec",
-            "default": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov",
-                "Dec"
+            "options": "\nJanuary\nFebruary\nMarch\nApril\nMay\nJune\nJuly\nAugust\nSeptember\nOctober\nNovember\nDecember",
+            "default": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+                "December"
             ][frappe.datetime.str_to_obj(frappe.datetime.get_today()).getMonth()],
         },
         {
@@ -26,7 +18,6 @@ frappe.query_reports["DATEV Sales Invoice"] = {
             "label": __('From'),
             "fieldtype": 'Date',
             "default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
-			// "reqd": 1,
 			"width": "60px"
         },
         {
