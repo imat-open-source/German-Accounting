@@ -77,9 +77,11 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						}
 					})
 					
-					frappe.tools.downloadify(result, null, "DATEV SI Report");
+					result = arrayToCsvFile(result, ";", "DATEV SI Report.csv");
+					
+					// frappe.tools.downloadify(result, null, "DATEV SI Report");
 
-					create_log(data.month, frm.doc.name)
+					// create_log(data.month, frm.doc.name)
 
 					// var t = frappe.urllib.get_full_url(`/api/method/frappe.utils.print_format.download_pdf?
 					// 		doctype=${frm.doc.doctype}
@@ -140,3 +142,31 @@ function create_log(month, datev_ex_map){
 		}
 	})
 }
+
+const arrayToCsvFile = (dataArray, delimiter, filename) => {
+	const csv = createCsv(dataArray, delimiter);
+	exportCsvToFile(csv, filename, delimiter);
+  };
+  
+  const createCsv = (rows, delimiter) => {
+	let returnStr = "";
+	rows.forEach(row => {
+	  row.forEach(field => {
+		returnStr += field + delimiter;
+	  });
+	  returnStr += "\r\n";
+	});
+	return returnStr;
+  };
+  
+  const exportCsvToFile = (csvData, filename, delimiter) => {
+	// FIXED: Comma instead of semicolon
+	csvData = "data:text/csv;charset=utf-8," + csvData;
+	const encodedUri = encodeURI(csvData);
+	// Trick to set filename
+	const link = document.createElement("a");
+	link.setAttribute("href", encodedUri);
+	link.setAttribute("download", filename);
+	document.body.appendChild(link); // Required for Firefox(?)
+	link.click();
+  };
