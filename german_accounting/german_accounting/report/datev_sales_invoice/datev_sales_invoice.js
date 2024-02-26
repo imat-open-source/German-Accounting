@@ -26,7 +26,7 @@ frappe.query_reports["DATEV Sales Invoice"] = {
             "label": __('From'),
             "fieldtype": 'Date',
             "default": frappe.datetime.add_months(frappe.datetime.get_today(), -1),
-			"reqd": 1,
+			// "reqd": 1,
 			"width": "60px"
         },
         {
@@ -36,4 +36,4 @@ frappe.query_reports["DATEV Sales Invoice"] = {
             "default": frappe.datetime.get_today()
         }
     ]
-};
+}
