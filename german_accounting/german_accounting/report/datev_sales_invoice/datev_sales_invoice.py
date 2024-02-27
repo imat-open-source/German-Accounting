@@ -172,7 +172,7 @@ def get_data(filters):
                 "country": d.code, 
                 "currency": d.currency, 
                 "journal_text": d.customer if d.country == 'Germany' else d.code + ", " + d.customer, 
-                "export_date": now_datetime().strftime("%Y-%m-%d %H:%M:%S"),
+                "export_date": d.custom_exported_on,
                 "total": d.grand_total, 
                 "total_datev": str(("%.2f" % d.grand_total)).replace(",","").replace(".",""), 
                 "tax_percentage": tax_percentage}

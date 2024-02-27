@@ -81,7 +81,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 					
 					// frappe.tools.downloadify(result, null, "DATEV SI Report");
 
-					// create_log(data.month, frm.doc.name)
+					create_log(data.month, frm.doc.name, result)
 
 					// var t = frappe.urllib.get_full_url(`/api/method/frappe.utils.print_format.download_pdf?
 					// 		doctype=${frm.doc.doctype}
@@ -130,12 +130,13 @@ function get_si_field_options() {
 }
 
 
-function create_log(month, datev_ex_map){
+function create_log(month, datev_ex_map, result){
 	frappe.call({
 		"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
 		args:{
 			"month": month,
-			"datev_exp_map": datev_ex_map
+			"datev_exp_map": datev_ex_map,
+			"csvData": result
 		},
 		callback: function(r){
 			
@@ -145,7 +146,7 @@ function create_log(month, datev_ex_map){
 
 const arrayToCsvFile = (dataArray, delimiter, filename) => {
 	const csv = createCsv(dataArray, delimiter);
-	exportCsvToFile(csv, filename, delimiter);
+	return exportCsvToFile(csv, filename, delimiter);
   };
   
   const createCsv = (rows, delimiter) => {
@@ -169,4 +170,5 @@ const arrayToCsvFile = (dataArray, delimiter, filename) => {
 	link.setAttribute("download", filename);
 	document.body.appendChild(link); // Required for Firefox(?)
 	link.click();
+	return csvData
   };
