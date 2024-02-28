@@ -35,7 +35,7 @@ def create_log(month, datev_exp_map, csvData):
 		
 		# update exported on in SI
 		month_start_date = get_first_day(getdate())
-		si_list = frappe.db.get_list('Sales Invoice', filters=[['posting_date', 'between', [month_start_date, today()]]])
+		si_list = frappe.db.get_list('Sales Invoice', filters=[['posting_date', 'between', [month_start_date, today()]], ['custom_exported_on', "=", ""]])
 		for si in si_list:
 			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
 			
