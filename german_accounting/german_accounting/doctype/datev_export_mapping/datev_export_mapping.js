@@ -26,6 +26,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 				],
 				primary_action: function() {
 					const data = d.get_values();
+					create_log(data.month, frm.doc.name, result)
 					var child = []
 					frappe.call({
 						method: "frappe.client.get",
@@ -54,7 +55,9 @@ frappe.ui.form.on('DATEV Export Mapping', {
 					frappe.call({
 						method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
 						args: {
-							filters: {'month': data.month}
+							filters: {'month': data.month,
+									'exported_on': true
+								}
 						},
 						async: false,
 						callback: function(r, rt) {
@@ -76,12 +79,9 @@ frappe.ui.form.on('DATEV Export Mapping', {
 							}
 						}
 					})
-					
 					result = arrayToCsvFile(result, ";", "DATEV SI Report.csv");
 					
 					// frappe.tools.downloadify(result, null, "DATEV SI Report");
-
-					create_log(data.month, frm.doc.name, result)
 
 					// var t = frappe.urllib.get_full_url(`/api/method/frappe.utils.print_format.download_pdf?
 					// 		doctype=${frm.doc.doctype}
@@ -130,14 +130,15 @@ function get_si_field_options() {
 }
 
 
-function create_log(month, datev_ex_map, result){
+function create_log(month, datev_ex_map){
 	frappe.call({
 		"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
 		args:{
 			"month": month,
 			"datev_exp_map": datev_ex_map,
-			"csvData": result
+			// "csvData": result
 		},
+		async: false,
 		callback: function(r){
 			
 		}

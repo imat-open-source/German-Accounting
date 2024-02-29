@@ -129,6 +129,12 @@ def get_conditions(filters):
         filters["month"] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
                 "December"].index(filters.month) + 1
         conditions += "AND month(si.posting_date) = %(month)s"
+    
+    if filters.get("exported_on"):
+        exported_on = filters.get("exported_on")
+        if filters.get("exported_on") == True:
+            exported_on = now_datetime().strftime("%d-%m-%Y %H:%M:%S")
+        conditions += " AND si.custom_exported_on = '{0}' ".format(exported_on)
     return conditions
 
 

@@ -22,7 +22,7 @@ class DATEVExportMapping(Document):
 
 
 @frappe.whitelist()
-def create_log(month, datev_exp_map, csvData):
+def create_log(month, datev_exp_map):
 	if month and datev_exp_map:
 		log_doc = frappe.new_doc("DATEV Export Log")
 		log_doc.update({
