@@ -26,8 +26,13 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2024-02-21 10:35:39.314685",
+ "links": [
+  {
+   "link_doctype": "DATEV Export Log",
+   "link_fieldname": "datev_export_mapping"
+  }
+ ],
+ "modified": "2024-02-27 11:16:38.839878",
  "modified_by": "Administrator",
  "module": "German Accounting",
  "name": "DATEV Export Mapping",

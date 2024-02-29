@@ -3,10 +3,10 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import get_link_to_form
-from frappe.utils import today, now_datetime
+from frappe.utils import get_link_to_form, get_url,formatdate,get_first_day, getdate, today, now_datetime
 from datetime import datetime, date
 from frappe import _
+import requests
 
 class DATEVExportMapping(Document):
 	def validate(self):
@@ -22,7 +22,7 @@ class DATEVExportMapping(Document):
 
 
 @frappe.whitelist()
-def create_log(month, datev_exp_map):
+def create_log(month, datev_exp_map, csvData):
 	if month and datev_exp_map:
 		log_doc = frappe.new_doc("DATEV Export Log")
 		log_doc.update({
@@ -33,4 +33,21 @@ def create_log(month, datev_exp_map):
 		})
 		log_doc.save(ignore_permissions=True)
 		
+		# update exported on in SI
+		month_start_date = get_first_day(getdate())
+		si_list = frappe.db.get_list('Sales Invoice', filters=[['posting_date', 'between', [month_start_date, today()]], ['custom_exported_on', "=", ""]])
+		for si in si_list:
+			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
+			
 		frappe.msgprint(_("A Log created for the download action. check log "+get_link_to_form("DATEV Export Log", log_doc.name)))
+		# url = get_url() + "/api/method/uploadfile"
+		# response = requests.post(url, headers={"Authorization":frappe.get_request_header("Authorization")}, 
+		# 						data={"cmd":"uploadfile",
+		# 						"doctype":"DATEV Export Mapping",
+		# 						"docname":"DATEV-EM-000001",
+		# 						"from_form":0,
+		# 						# "filename":frappe.local.form_dict.filename,
+		# 						"filedata":csvData})
+		# frappe.errprint(frappe.get_request_header("Authorization"))
+		# file_url = "/files/"+filename
+		# frappe.db.set_value("Employee",emp_doc.name,"attachment",file_url)

@@ -138,8 +138,8 @@ def get_data(filters):
     res = frappe.db.sql(
         """ SELECT si.*, co.code, ad.country
             FROM `tabSales Invoice` si, `tabAddress` ad, `tabCountry` co
-            WHERE si.shipping_address_name=ad.name AND ad.country=co.name %s  """% conditions,filters, as_dict = 1)
-
+            WHERE si.docstatus!=2 AND si.customer_address=ad.name AND ad.country=co.name %s  """% conditions,filters, as_dict = 1)
+    
     for d in res:
         line_item_details = frappe.db.sql(""" SELECT sii.income_account, ttd.tax_rate
                                             FROM `tabSales Invoice Item` sii, `tabItem Tax Template Detail` ttd
@@ -172,7 +172,7 @@ def get_data(filters):
                 "country": d.code, 
                 "currency": d.currency, 
                 "journal_text": d.customer if d.country == 'Germany' else d.code + ", " + d.customer, 
-                "export_date": now_datetime().strftime("%Y-%m-%d %H:%M:%S"),
+                "export_date": d.custom_exported_on,
                 "total": d.grand_total, 
                 "total_datev": str(("%.2f" % d.grand_total)).replace(",","").replace(".",""), 
                 "tax_percentage": tax_percentage}
