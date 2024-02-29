@@ -25,6 +25,13 @@ frappe.query_reports["DATEV Sales Invoice"] = {
             "label": __('To'),
             "fieldtype": 'Date',
             "default": frappe.datetime.get_today()
+        },
+        {
+            "fieldname": 'exported_on',
+            "label": __('Exported On'),
+            "fieldtype": 'Data',
+            "hidden": 1
+            // "default": frappe.datetime.get_today()
         }
     ],
 }
