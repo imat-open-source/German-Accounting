@@ -57,3 +57,4 @@ def create_log(month, datev_exp_map):
 		# frappe.errprint(frappe.get_request_header("Authorization"))
 		# file_url = "/files/"+filename
 		# frappe.db.set_value("Employee",emp_doc.name,"attachment",file_url)
+		return log_doc.name
