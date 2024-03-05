@@ -176,13 +176,3 @@ const arrayToCsvFile = (dataArray, delimiter, filename) => {
 	link.click();
 	return csvData
   };
-
-function get_filters_html_for_print(applied_filters) {
-	return Object.keys(applied_filters)
-		.map((fieldname) => {
-			const docfield = get_filter(applied_filters, fieldname);
-			const value = applied_filters[fieldname];
-			return `<h6>${__(docfield.label)}: ${frappe.format(value, docfield)}</h6>`;
-		})
-		.join("");
-}
