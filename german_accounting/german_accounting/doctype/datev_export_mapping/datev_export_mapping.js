@@ -25,70 +25,88 @@ frappe.ui.form.on('DATEV Export Mapping', {
 					}
 				],
 				primary_action: function() {
-					const data = d.get_values();
-					create_log(data.month, frm.doc.name, result)
-					var child = []
+					let data = d.get_values();
 					frappe.call({
-						method: "frappe.client.get",
-						args: {
-							doctype: "DATEV Export Mapping",
-							filters: {},
-							fields: ["*"]
+						"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
+						args:{
+							"month": data.month,
+							"datev_exp_map": frm.doc.name,
+							// "csvData": result
 						},
 						async: false,
-						callback: function(t){
-							child.push(t.message.field_mapping_table)
-						}
-					})
-					var cus_column_headers = []
-					var si_field_id = []
-					if(child.length > 0){
-						child[0].forEach((c) => {
-							cus_column_headers.push(c.customer_field_id);
-							si_field_id.push(c.sales_invoice_field_id)
-						});
-					}
-					
-					var result = []
-					result.push(si_field_id)
-					
-					frappe.call({
-						method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
-						args: {
-							filters: {'month': data.month,
-									'exported_on': true
-								}
-						},
-						async: false,
-						callback: function(r, rt) {
+						callback: function(r){
 							if (r.message) {
-								for(var i in r.message[1]){
-									var row = []
-									for(var si in si_field_id){
-										if(si_field_id[si] in r.message[1][i]){
-											row.push(r.message[1][i][si_field_id[si]])
+								let datev_export_log_name = r.message;
+								var cus_column_headers = []
+								var si_field_id = []
+								if(frm.doc.field_mapping_table.length > 0){
+									frm.doc.field_mapping_table.forEach((c) => {
+										cus_column_headers.push(c.customer_field_id);
+										si_field_id.push(c.sales_invoice_field_id);
+									});
+								}
+								
+								var result = [];
+								result.push(si_field_id);
+
+								frappe.call({
+									method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
+									args: {
+										filters: {
+											'month': data.month,
+											// 'exported_on': true
 										}
-										if(si_field_id[si] == ""){
-											row.push([" "])
+									},
+									async: false,
+									callback: function(r, rt) {
+										if (r.message) {
+											let columns = r.message[0];
+											let rows = r.message[1];
+											for(var i in rows){
+												var row = []
+												for(var si in si_field_id){
+													if(si_field_id[si] in rows[i]){
+														row.push(rows[i][si_field_id[si]])
+													}
+													if(si_field_id[si] == ""){
+														row.push([" "])
+													}
+												}
+												result.push(row)
+											}
+		
+											// Create a Blob containing the CSV data
+											const csv = createCsv(result, ";");
+											const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+
+											// Create a FormData object
+											const formData = new FormData();
+
+											// Append the Blob as a file to the FormData object
+											formData.append('file', blob, 'report.csv');
+											formData.append('folder', "Home/Attachments");						
+											formData.append('doctype', 'DATEV Export Log');
+											formData.append('docname', datev_export_log_name);
+											formData.append('fieldname', 'csv');
+											formData.append('is_private', '1');											
+
+											fetch('/api/method/upload_file', {
+												headers: {
+													'X-Frappe-CSRF-Token': frappe.csrf_token
+												},
+												method: 'POST',
+												body: formData
+											}).then(res => res.json()).then(data => {			
+												if (data.message){
+													frappe.db.set_value("DATEV Export Log", datev_export_log_name, "csv", data.message.file_url);	
+												}
+											})
 										}
 									}
-									// row = row.toString().replace(",",";")
-
-									result.push(row)
-								}
+								})		
 							}
 						}
 					})
-					result = arrayToCsvFile(result, ";", "DATEV SI Report.csv");
-					
-					// frappe.tools.downloadify(result, null, "DATEV SI Report");
-
-					// var t = frappe.urllib.get_full_url(`/api/method/frappe.utils.print_format.download_pdf?
-					// 		doctype=${frm.doc.doctype}
-					// 		&name=${frm.doc.name}
-					// 		&format=standard
-					// 		&lang=en`)
-					// 		console.log(t)
 					d.hide();
 				},
 				primary_action_label: __("Submit")
@@ -127,22 +145,6 @@ function get_si_field_options() {
 		});
 	});
 	return options;
-}
-
-
-function create_log(month, datev_ex_map){
-	frappe.call({
-		"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
-		args:{
-			"month": month,
-			"datev_exp_map": datev_ex_map,
-			// "csvData": result
-		},
-		async: false,
-		callback: function(r){
-			
-		}
-	})
 }
 
 const arrayToCsvFile = (dataArray, delimiter, filename) => {

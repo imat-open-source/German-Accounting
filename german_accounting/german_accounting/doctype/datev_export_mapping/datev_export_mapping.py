@@ -40,14 +40,4 @@ def create_log(month, datev_exp_map):
 			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
 			
 		frappe.msgprint(_("A Log created for the download action. check log "+get_link_to_form("DATEV Export Log", log_doc.name)))
-		# url = get_url() + "/api/method/uploadfile"
-		# response = requests.post(url, headers={"Authorization":frappe.get_request_header("Authorization")}, 
-		# 						data={"cmd":"uploadfile",
-		# 						"doctype":"DATEV Export Mapping",
-		# 						"docname":"DATEV-EM-000001",
-		# 						"from_form":0,
-		# 						# "filename":frappe.local.form_dict.filename,
-		# 						"filedata":csvData})
-		# frappe.errprint(frappe.get_request_header("Authorization"))
-		# file_url = "/files/"+filename
-		# frappe.db.set_value("Employee",emp_doc.name,"attachment",file_url)
+		return log_doc.name
