@@ -40,6 +40,12 @@ def create_log(month, datev_exp_map):
 			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
 			
 		frappe.msgprint(_("A Log created for the download action. check log "+get_link_to_form("DATEV Export Log", log_doc.name)))
+		
+		# import glob
+		# import os
+		# files = glob.glob('/Downloads/*')
+		# latest_file = max(files, key=os.path.getctime)
+		# frappe.errprint(latest_file)
 		# url = get_url() + "/api/method/uploadfile"
 		# response = requests.post(url, headers={"Authorization":frappe.get_request_header("Authorization")}, 
 		# 						data={"cmd":"uploadfile",
