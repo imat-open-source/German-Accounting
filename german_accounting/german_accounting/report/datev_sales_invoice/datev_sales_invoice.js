@@ -33,5 +33,5 @@ frappe.query_reports["DATEV Sales Invoice"] = {
             "hidden": 1
             // "default": frappe.datetime.get_today()
         }
-    ],
+    ]
 }

@@ -1,5 +1,5 @@
 {
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [
   {
    "fieldname": "name",
@@ -59,7 +59,7 @@
  ],
  "idx": 0,
  "is_standard": "Yes",
- "modified": "2024-02-13 06:27:54.813266",
+ "modified": "2024-03-01 18:50:32.985899",
  "modified_by": "Administrator",
  "module": "German Accounting",
  "name": "DATEV Sales Invoice",

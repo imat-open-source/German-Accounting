@@ -5,10 +5,10 @@ frappe.ui.form.on('DATEV Export Mapping', {
 	refresh: function(frm) {
 		frm.add_custom_button(__('Show Report'), function () {
 			frappe.set_route('query-report', 'DATEV Sales Invoice', {})
-		}, __('Actions'));
+		});
 
 		// csv download
-		frm.add_custom_button(__('Download Report'), function () {
+		frm.add_custom_button(__('Create DATEV Export Log'), function () {
 
 			let d = new frappe.ui.Dialog({
 				title: __("Select Month"),
@@ -21,7 +21,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						"default": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
 							"December"
 						][frappe.datetime.str_to_obj(frappe.datetime.get_today()).getMonth()],
-						"reqd": 1,
+						"reqd": 1
 					}
 				],
 				primary_action: function() {
@@ -113,7 +113,8 @@ frappe.ui.form.on('DATEV Export Mapping', {
 			});
 			d.show();
 			
-		}, __('Actions'));
+		});
+		
 	},
 	onload: function(frm){
 		var df = frappe.meta.get_docfield("DATEV Export Mapping Table","sales_invoice_field_id", frm.doc.name);

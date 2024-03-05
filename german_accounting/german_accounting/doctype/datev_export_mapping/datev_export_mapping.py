@@ -39,5 +39,5 @@ def create_log(month, datev_exp_map):
 		for si in si_list:
 			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
 			
-		frappe.msgprint(_("A Log created for the download action. check log "+get_link_to_form("DATEV Export Log", log_doc.name)))
+		frappe.msgprint(_("A DATEV Export Log "+get_link_to_form("DATEV Export Log", log_doc.name) + " has been created for "+ month +" month containing a *.csv and *.pdf that can be downloaded"))
 		return log_doc.name
