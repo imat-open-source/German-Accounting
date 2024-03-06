@@ -40,6 +40,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						callback: function(r){
 							if (r.message) {
 								let datev_export_log_name = r.message;
+								var result = [];
 								// resolve();
 								frappe.dom.unfreeze();
 								frm.reload_doc();
