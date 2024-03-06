@@ -40,22 +40,10 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						callback: function(r){
 							if (r.message) {
 								let datev_export_log_name = r.message;
-								var cus_column_headers = []
-								var si_field_id = []
-								if(frm.doc.field_mapping_table.length > 0){
-									frm.doc.field_mapping_table.forEach((c) => {
-										cus_column_headers.push(c.customer_field_id);
-										si_field_id.push(c.sales_invoice_field_id);
-									});
-								}
-								
 								var result = [];
-								result.push(si_field_id);
-								
 								// resolve();
 								frappe.dom.unfreeze();
 								frm.reload_doc();
-
 								frappe.call({
 									method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
 									args: {
@@ -69,19 +57,26 @@ frappe.ui.form.on('DATEV Export Mapping', {
 										if (r.message) {
 											let columns = r.message[0];
 											let rows = r.message[1];
-											for(var i in rows){
-												var row = []
-												for(var si in si_field_id){
-													if(si_field_id[si] in rows[i]){
-														row.push(rows[i][si_field_id[si]])
+			
+											// Add header row to csv_rows
+											result.push(frm.doc.field_mapping_table.map(mapping => mapping.sales_invoice_field_id || ""));
+											rows.forEach(function (row) {
+												let csv_row = [];
+											
+												frm.doc.field_mapping_table.forEach(function (mapping) {
+													let sales_invoice_field_id = mapping.sales_invoice_field_id;
+													let is_empty_column = mapping.is_empty_column;
+													if (sales_invoice_field_id !== "" && sales_invoice_field_id in row) {
+														csv_row.push(row[sales_invoice_field_id].toString());
 													}
-													if(si_field_id[si] == ""){
-														row.push([" "])
+													else {
+														csv_row.push([" "]);
 													}
-												}
-												result.push(row)
-											}
-		
+												});
+											
+												result.push(csv_row);
+											});
+
 											// Create a Blob containing the CSV data
 											const csv = createCsv(result, ";");
 											const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
