@@ -26,6 +26,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 				],
 				primary_action: function() {
 					let data = d.get_values();
+					frappe.dom.freeze()
 					frappe.call({
 						"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
 						args:{
@@ -50,6 +51,10 @@ frappe.ui.form.on('DATEV Export Mapping', {
 								
 								var result = [];
 								result.push(si_field_id);
+								
+								// resolve();
+								frappe.dom.unfreeze();
+								frm.reload_doc();
 
 								frappe.call({
 									method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
