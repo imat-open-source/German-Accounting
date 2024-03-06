@@ -43,7 +43,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 								// resolve();
 								frappe.dom.unfreeze();
 								frm.reload_doc();
-								frappes.call({
+								frappe.call({
 									method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
 									args: {
 										filters: {
