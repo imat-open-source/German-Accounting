@@ -26,6 +26,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 				],
 				primary_action: function() {
 					let data = d.get_values();
+					frappe.dom.freeze()
 					frappe.call({
 						"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
 						args:{
@@ -34,6 +35,8 @@ frappe.ui.form.on('DATEV Export Mapping', {
 							// "csvData": result
 						},
 						async: false,
+						freeze: true,
+						freeze_message: __("Creating Log"),
 						callback: function(r){
 							if (r.message) {
 								let datev_export_log_name = r.message;
@@ -48,13 +51,17 @@ frappe.ui.form.on('DATEV Export Mapping', {
 								
 								var result = [];
 								result.push(si_field_id);
+								
+								// resolve();
+								frappe.dom.unfreeze();
+								frm.reload_doc();
 
 								frappe.call({
 									method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
 									args: {
 										filters: {
 											'month': data.month,
-											// 'exported_on': true
+											'exported_on': true
 										}
 									},
 									async: false,
@@ -148,31 +155,14 @@ function get_si_field_options() {
 	return options;
 }
 
-const arrayToCsvFile = (dataArray, delimiter, filename) => {
-	const csv = createCsv(dataArray, delimiter);
-	return exportCsvToFile(csv, filename, delimiter);
-  };
-  
-  const createCsv = (rows, delimiter) => {
-	let returnStr = "";
-	rows.forEach(row => {
-	  row.forEach(field => {
-		returnStr += field + delimiter;
-	  });
-	  returnStr += "\r\n";
+const createCsv = (rows, delimiter) => {
+let returnStr = "";
+rows.forEach(row => {
+	row.forEach(field => {
+	returnStr += field + delimiter;
 	});
-	return returnStr;
-  };
+	returnStr += "\r\n";
+});
+return returnStr;
+};
   
-  const exportCsvToFile = (csvData, filename, delimiter) => {
-	// FIXED: Comma instead of semicolon
-	csvData = "data:text/csv;charset=utf-8," + csvData;
-	const encodedUri = encodeURI(csvData);
-	// Trick to set filename
-	const link = document.createElement("a");
-	link.setAttribute("href", encodedUri);
-	link.setAttribute("download", filename);
-	document.body.appendChild(link); // Required for Firefox(?)
-	link.click();
-	return csvData
-  };
