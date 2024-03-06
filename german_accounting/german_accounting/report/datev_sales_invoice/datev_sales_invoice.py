@@ -135,6 +135,16 @@ def get_conditions(filters):
         if filters.get("exported_on") == True:
             exported_on = now_datetime().strftime("%d-%m-%Y %H:%M:%S")
         conditions += " AND si.custom_exported_on = '{0}' ".format(exported_on)
+
+    if filters.get("from_date") and filters.get("to_date"):
+        conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s"
+    else:
+        if filters.get("month"):
+            today = datetime.today().date()
+            first_day = get_first_day(today.replace(month=filters.get("month")))
+            last_day = get_last_day(today.replace(month=filters.get("month")))
+            conditions += " AND si.posting_date BETWEEN '{0}' AND '{1}'".format(first_day, last_day)
+
     return conditions
 
 

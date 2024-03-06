@@ -7,6 +7,7 @@ from frappe.utils import get_link_to_form, get_url,formatdate,get_first_day, get
 from datetime import datetime, date
 from frappe import _
 import requests
+import time
 
 class DATEVExportMapping(Document):
 	def validate(self):
@@ -40,4 +41,5 @@ def create_log(month, datev_exp_map):
 			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
 			
 		frappe.msgprint(_("A DATEV Export Log "+get_link_to_form("DATEV Export Log", log_doc.name) + " has been created for "+ month +" month containing a *.csv and *.pdf that can be downloaded"))
+		# time.sleep(5)
 		return log_doc.name
