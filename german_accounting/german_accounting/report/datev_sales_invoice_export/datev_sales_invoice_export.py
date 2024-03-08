@@ -102,7 +102,7 @@ def get_columns():
 			"label": _("total"),
 			"fieldtype": "Currency",
 			"fieldname": "total",
-			"width": 100
+			"width": 80
 		},
 		{
 			"label": _(""),
@@ -115,26 +115,26 @@ def get_columns():
 			"fieldtype": "Data",
 			"fieldname": "debit_to",
 			# "options": "Account",
-			"width": 100
+			"width": 80
 		},
 		{
 			"label": _("invoice_no"),
 			"fieldtype": "Link",
 			"fieldname": "invoice_no",
 			"options": "Sales Invoice",
-			"width": 180
+			"width": 170
 		},
 		{
 			"label": _("posting_date"),
 			"fieldtype": "Date",
 			"fieldname": "posting_date",
-			"width": 120
+			"width": 100
 		},
 		{
 			"label": _("G/L account"),
 			"fieldtype": "Data",
 			"fieldname": "income_account",
-			"width": 180
+			"width": 160
 		},
 		{
 			"label": _("cost_center"),
@@ -177,7 +177,7 @@ def get_columns():
 			"label": _("tax_rate"),
 			"fieldtype": "Data",
 			"fieldname": "item_tax_rate",
-			"width": 180
+			"width": 120
 		},
 		{
 			"label": _("currency"),
