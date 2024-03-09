@@ -34,11 +34,11 @@ def get_data(filters):
 	for entry in data:
 		h_or_s = "S" if entry.get('is_return') else "H"
 		invoices_map.setdefault(entry.get('invoice_no'), []).append({
-			"posting_date": format_date(entry.get('posting_date'), "dd-mm"),
+			"posting_date": format_date(entry.get('posting_date'), "ddmm"),
 			"cost_center": entry.get('cost_center').split("-")[0].replace(" ", "") if entry.get('cost_center') else "",
 			"tax_id": entry.get('tax_id'),
 			"currency": entry.get('currency'),
-			"total": "{0} {1}".format(str(("%.2f" % flt(entry.total))).replace(",","").replace(".",""), h_or_s),
+			"total": "{0}{1}".format(str(("%.2f" % flt(entry.total))).replace(",","").replace(".",""),h_or_s),
 			"debit_to": entry.get('debit_to'),
 			"item_tax_rate": entry.get('item_tax_rate'),
 			"income_account": entry.get('income_account')
