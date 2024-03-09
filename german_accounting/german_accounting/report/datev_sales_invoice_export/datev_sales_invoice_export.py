@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, cstr
+from frappe.utils import flt, cstr, format_date
 from collections import defaultdict
 import json
 
@@ -23,7 +23,7 @@ def get_data(filters):
 	data = frappe.db.sql(
 	"""
 		SELECT
-			si.name as invoice_no, si.posting_date, 
+			si.name as invoice_no, si.posting_date, si.is_return,
 			si.cost_center, si.tax_id, si.currency, si.total, si.debit_to,
 			sii.income_account, sii.item_tax_rate
 		FROM `tabSales Invoice` si, `tabSales Invoice Item` sii
@@ -32,12 +32,13 @@ def get_data(filters):
 	
 	invoices_map = {}
 	for entry in data:
+		h_or_s = "S" if entry.get('is_return') else "H"
 		invoices_map.setdefault(entry.get('invoice_no'), []).append({
-			"posting_date": entry.get('posting_date'),
-			"cost_center": entry.get('cost_center'),
+			"posting_date": format_date(entry.get('posting_date'), "ddmm"),
+			"cost_center": entry.get('cost_center').split("-")[0].replace(" ", "") if entry.get('cost_center') else "",
 			"tax_id": entry.get('tax_id'),
 			"currency": entry.get('currency'),
-			"total": entry.get('total'),
+			"total": "{0}{1}".format(str(("%.2f" % flt(entry.total))).replace(",","").replace(".",""),h_or_s),
 			"debit_to": entry.get('debit_to'),
 			"item_tax_rate": entry.get('item_tax_rate'),
 			"income_account": entry.get('income_account')
@@ -100,9 +101,9 @@ def get_columns():
 	columns = [
 		{
 			"label": _("total"),
-			"fieldtype": "Currency",
+			"fieldtype": "Data",
 			"fieldname": "total",
-			"width": 80
+			"width": 100
 		},
 		{
 			"label": _(""),
@@ -126,7 +127,7 @@ def get_columns():
 		},
 		{
 			"label": _("posting_date"),
-			"fieldtype": "Date",
+			"fieldtype": "Data",
 			"fieldname": "posting_date",
 			"width": 100
 		},
