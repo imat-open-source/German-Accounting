@@ -3,12 +3,17 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, cstr, format_date
+from frappe.utils import flt, cstr, today, now_datetime, get_first_day, get_last_day, format_date
+from datetime import datetime
 from collections import defaultdict
 import json
 
 
+@frappe.whitelist()
 def execute(filters=None):
+	if isinstance(filters, str):
+		filters = json.loads(filters)
+	filters = frappe._dict(filters or {})
 	columns, data = [], []
 	columns = get_columns()
 	data = get_data(filters)
@@ -36,12 +41,12 @@ def get_data(filters):
 		invoices_map.setdefault(entry.get('invoice_no'), []).append({
 			"posting_date": format_date(entry.get('posting_date'), "ddmm"),
 			"cost_center": entry.get('cost_center').split("-")[0].replace(" ", "") if entry.get('cost_center') else "",
-			"tax_id": entry.get('tax_id'),
+			"tax_id": entry.get('tax_id') if entry.get('tax_id') else "",
 			"currency": entry.get('currency'),
 			"total": "{0}{1}".format(str(("%.2f" % flt(entry.total))).replace(",","").replace(".",""),h_or_s),
 			"debit_to": entry.get('debit_to'),
 			"item_tax_rate": entry.get('item_tax_rate'),
-			"income_account": entry.get('income_account')
+			"income_account": entry.get('income_account'),
 		})
 	
 	merged_data = {}
@@ -76,6 +81,7 @@ def get_data(filters):
 			merged_values['cost_center'] = entry['cost_center']
 			merged_values['tax_id'] = entry['tax_id']
 			merged_values['currency'] = entry['currency']
+			merged_values['1_col'] = '1'
 
 		merged_data[key] = merged_values
 
@@ -84,7 +90,15 @@ def get_data(filters):
 		row = {}
 		row['invoice_no'] = inv_name
 		row.update(inv_data)
-		row['debit_to'] = row['debit_to'].split("-")[0].replace(" ", "")
+		if row.get('debit_to'):
+			### Debitor No DATEV 
+			deb_no_datev = row['debit_to'].split("-")[0].replace(" ", "")
+			if len(deb_no_datev) < 9:
+				n = 9 - len(deb_no_datev)
+				zeros = '0' * n
+				deb_no_datev += zeros
+			row['debit_to'] = deb_no_datev
+
 		data.append(row)
 
 	return data
@@ -92,9 +106,23 @@ def get_data(filters):
 
 def get_conditions(filters):
 	conditions = ""
-	if filters.get("posting_date"):
+	if filters.get("month"):
+		filters["month"] = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+				"December"].index(filters.month) + 1
+		conditions += "AND month(si.posting_date) = %(month)s"
+
+	if filters.get("sales_invoice_exported"):
+		conditions += " AND coalesce(si.custom_exported_on, '') = '' "
+
+	if filters.get("from_date") and filters.get("to_date"):
 		conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s"
-	
+	else:
+		if filters.get("month"):
+			today = datetime.today().date()
+			first_day = get_first_day(today.replace(month=filters.get("month")))
+			last_day = get_last_day(today.replace(month=filters.get("month")))
+			conditions += " AND si.posting_date BETWEEN '{0}' AND '{1}'".format(first_day, last_day)
+
 	return conditions
 
 def get_columns():
@@ -115,8 +143,8 @@ def get_columns():
 			"label": _("debit_to"),
 			"fieldtype": "Data",
 			"fieldname": "debit_to",
-			# "options": "Account",
-			"width": 80
+			"is_quoted_in_csv": 1,
+			"width": 90
 		},
 		{
 			"label": _("invoice_no"),
@@ -184,6 +212,7 @@ def get_columns():
 			"label": _("currency"),
 			"fieldtype": "Data",
 			"fieldname": "currency",
+			"is_quoted_in_csv": 1,
 			"width": 110
 		},
 		{
@@ -205,10 +234,10 @@ def get_columns():
 			"width": 20
 		},
 		{
-			"label": _("1"),
+			"label": _(""),
 			"fieldtype": "Data",
-			"fieldname": "1",
-			"width": 110
+			"fieldname": "1_col",
+			"width": 160
 		},
 		{
 			"label": _(""),
