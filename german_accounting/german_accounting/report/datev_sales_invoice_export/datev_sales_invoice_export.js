@@ -26,12 +26,11 @@ frappe.query_reports["DATEV Sales Invoice Export"] = {
             "fieldtype": 'Date',
             "default": frappe.datetime.get_today()
         },
-        // {
-        //     "fieldname": 'exported_on',
-        //     "label": __('Exported On'),
-        //     "fieldtype": 'Data',
-        //     "hidden": 1
-        //     // "default": frappe.datetime.get_today()
-        // }
+        {
+            "fieldname": 'unexported_sales_invoice',
+            "label": __('Sales Invoice Exported'),
+            "fieldtype": 'Date',
+            "hidden": 1
+        }
     ]
 };

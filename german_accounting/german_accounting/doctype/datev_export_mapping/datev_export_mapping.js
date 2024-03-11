@@ -24,59 +24,84 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						"reqd": 1
 					}
 				],
-				primary_action: function() {
+				primary_action: async function() {
 					let data = d.get_values();
-					frappe.dom.freeze()
+					let include_header_in_csv = false;
+					await frappe.db.get_single_value("German Accounting Settings", "include_header_in_csv").then((value) => {
+						if (value) {
+							include_header_in_csv = true;
+						}
+					});
+
+					// frappe.dom.freeze()
+
 					frappe.call({
-						"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
-						args:{
-							"month": data.month,
-							"datev_exp_map": frm.doc.name,
-							// "csvData": result
+						method: "german_accounting.german_accounting.report.datev_sales_invoice_export.datev_sales_invoice_export.execute",
+						args: {
+							filters: {
+								'month': data.month,
+								'unexported_sales_invoice': true
+							}
 						},
 						async: false,
-						freeze: true,
-						freeze_message: __("Creating Log"),
-						callback: function(r){
+						callback: function(r, rt) {
 							if (r.message) {
-								let datev_export_log_name = r.message;
+								let columns = r.message[0];
+								let rows = r.message[1];
 								var result = [];
-								// resolve();
-								frappe.dom.unfreeze();
-								frm.reload_doc();
-								frappe.call({
-									method: "german_accounting.german_accounting.report.datev_sales_invoice.datev_sales_invoice.execute",
-									args: {
-										filters: {
-											'month': data.month,
-											'exported_on': true
+								if (rows.length == 0) {
+									frappe.throw("No data found!")
+								}
+								let sales_invoices = rows.map(row => row.invoice_no);
+
+								if (include_header_in_csv) {
+									let field_mapping_table = columns.map(column => column.label);
+									result.push(field_mapping_table);
+								}
+
+								rows.forEach(function (row) {
+									let csv_row = [];
+								
+									columns.forEach(function (mapping) {
+										let mapping_label = mapping.label;
+										let one_col = mapping.one_col;
+										// debugger;
+										if ((mapping_label !== "") && mapping_label in row) {
+											if (mapping.is_quoted_in_csv) {
+												csv_row.push('"'+row[mapping_label]+'"');
+											}
+											else {
+												csv_row.push(row[mapping_label]);
+											}
 										}
+										else {
+											if (one_col) {
+												debugger;
+												csv_row.push("1");
+											} else {
+												csv_row.push("");
+											}
+											// csv_row.push([""]);
+										}
+									});
+								
+									result.push(csv_row);
+								});
+
+								frappe.call({
+									"method": "german_accounting.german_accounting.doctype.datev_export_mapping.datev_export_mapping.create_log",
+									args:{
+										"month": data.month,
+										"datev_exp_map": frm.doc.name,
+										"sales_invoices": sales_invoices
 									},
 									async: false,
-									callback: function(r, rt) {
+									freeze: true,
+									freeze_message: __("Creating Log"),
+									callback: function(r){
 										if (r.message) {
-											let columns = r.message[0];
-											let rows = r.message[1];
-			
-											// Add header row to csv_rows
-											result.push(frm.doc.field_mapping_table.map(mapping => mapping.sales_invoice_field_id || ""));
-											rows.forEach(function (row) {
-												let csv_row = [];
-											
-												frm.doc.field_mapping_table.forEach(function (mapping) {
-													let sales_invoice_field_id = mapping.sales_invoice_field_id;
-													let is_empty_column = mapping.is_empty_column;
-													if (sales_invoice_field_id !== "" && sales_invoice_field_id in row) {
-														csv_row.push(row[sales_invoice_field_id].toString());
-													}
-													else {
-														csv_row.push([" "]);
-													}
-												});
-											
-												result.push(csv_row);
-											});
-
+											let datev_export_log_name = r.message;
+											frappe.dom.unfreeze();
 											// Create a Blob containing the CSV data
 											const csv = createCsv(result, ";");
 											const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
@@ -85,7 +110,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 											const formData = new FormData();
 
 											// Append the Blob as a file to the FormData object
-											formData.append('file', blob, 'report.csv');
+											formData.append('file', blob, 'report-' + datev_export_log_name +'.csv');
 											formData.append('folder', "Home/Attachments");						
 											formData.append('doctype', 'DATEV Export Log');
 											formData.append('docname', datev_export_log_name);
@@ -105,7 +130,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 											})
 										}
 									}
-								})		
+								})
 							}
 						}
 					})
@@ -154,7 +179,7 @@ const createCsv = (rows, delimiter) => {
 let returnStr = "";
 rows.forEach(row => {
 	row.forEach(field => {
-	returnStr += field + delimiter;
+		returnStr += field + delimiter;
 	});
 	returnStr += "\r\n";
 });
