@@ -24,8 +24,15 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						"reqd": 1
 					}
 				],
-				primary_action: function() {
+				primary_action: async function() {
 					let data = d.get_values();
+					let include_header_in_csv = false;
+					await frappe.db.get_single_value("German Accounting Settings", "include_header_in_csv").then((value) => {
+						if (value) {
+							include_header_in_csv = true;
+						}
+					});
+
 					// frappe.dom.freeze()
 
 					frappe.call({
@@ -41,26 +48,25 @@ frappe.ui.form.on('DATEV Export Mapping', {
 							if (r.message) {
 								let columns = r.message[0];
 								let rows = r.message[1];
-								console.log(columns);
-								console.log(rows);
 								var result = [];
 								if (rows.length == 0) {
 									frappe.throw("No data found!")
 								}
 								let sales_invoices = rows.map(row => row.invoice_no);
-								frappe.db.get_single_value("German Accounting Settings", "include_header_in_csv").then((value) => {
-									if (value) {
-										let field_mapping_table = columns.map(column => column.label);
-										result.push(field_mapping_table);
-									}
-								  });
+
+								if (include_header_in_csv) {
+									let field_mapping_table = columns.map(column => column.label);
+									result.push(field_mapping_table);
+								}
 
 								rows.forEach(function (row) {
 									let csv_row = [];
 								
 									columns.forEach(function (mapping) {
 										let mapping_label = mapping.label;
-										if (mapping_label !== "" && mapping_label in row) {
+										let one_col = mapping.one_col;
+										// debugger;
+										if ((mapping_label !== "") && mapping_label in row) {
 											if (mapping.is_quoted_in_csv) {
 												csv_row.push('"'+row[mapping_label]+'"');
 											}
@@ -69,7 +75,12 @@ frappe.ui.form.on('DATEV Export Mapping', {
 											}
 										}
 										else {
-											csv_row.push("");
+											if (one_col) {
+												debugger;
+												csv_row.push("1");
+											} else {
+												csv_row.push("");
+											}
 											// csv_row.push([""]);
 										}
 									});
@@ -168,7 +179,7 @@ const createCsv = (rows, delimiter) => {
 let returnStr = "";
 rows.forEach(row => {
 	row.forEach(field => {
-	returnStr += field + delimiter;
+		returnStr += field + delimiter;
 	});
 	returnStr += "\r\n";
 });
