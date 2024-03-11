@@ -23,23 +23,27 @@ class DATEVExportMapping(Document):
 
 
 @frappe.whitelist()
-def create_log(month, datev_exp_map):
-	if month and datev_exp_map:
-		log_doc = frappe.new_doc("DATEV Export Log")
-		log_doc.update({
-			"month": month,
-			"exported_on": now_datetime().strftime("%d-%m-%Y %H:%M:%S"),
-			"datev_export_mapping": datev_exp_map,
-			"year": str(date.today().year)
-		})
-		log_doc.save(ignore_permissions=True)
+def create_log(month, datev_exp_map, sales_invoices=[]):
+	if sales_invoices and not isinstance(sales_invoices, list):
+		sales_invoices = frappe.parse_json(sales_invoices)
+
+	exported_on = now_datetime().strftime("%d-%m-%Y %H:%M:%S")
+	log_doc = frappe.new_doc("DATEV Export Log")
+	log_doc.update({
+		"month": month,
+		"exported_on": exported_on,
+		"datev_export_mapping": datev_exp_map,
+		"year": str(date.today().year)
+	})
+	log_doc.save(ignore_permissions=True)
+	
+	# update exported on in SI
+	# month_start_date = get_first_day(getdate())
+	# si_list = frappe.db.get_list('Sales Invoice', filters=[['posting_date', 'between', [month_start_date, today()]], ['custom_exported_on', "=", ""]])
+	for si in sales_invoices:
+		frappe.db.set_value("Sales Invoice", si, "custom_exported_on", exported_on)
 		
-		# update exported on in SI
-		month_start_date = get_first_day(getdate())
-		si_list = frappe.db.get_list('Sales Invoice', filters=[['posting_date', 'between', [month_start_date, today()]], ['custom_exported_on', "=", ""]])
-		for si in si_list:
-			frappe.db.set_value("Sales Invoice", si.name, "custom_exported_on", log_doc.exported_on)
-			
-		frappe.msgprint(_("A DATEV Export Log "+get_link_to_form("DATEV Export Log", log_doc.name) + " has been created for "+ month +" month containing a *.csv and *.pdf that can be downloaded"))
-		# time.sleep(5)
-		return log_doc.name
+	frappe.msgprint(_("A DATEV Export Log "+get_link_to_form("DATEV Export Log", log_doc.name) + " has been created for "+ month +" month containing a *.csv and *.pdf that can be downloaded"))
+	# time.sleep(5)
+	return log_doc.name
+	# return "abcd" #log_doc.name

@@ -2,7 +2,6 @@
  "actions": [],
  "allow_rename": 1,
  "creation": "2023-10-28 13:13:09.717560",
- "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -10,7 +9,9 @@
   "goods_item_group",
   "column_break_cx7ey",
   "service_item_group",
-  "good_or_service_selection"
+  "good_or_service_selection",
+  "datev_export_section",
+  "include_header_in_csv"
  ],
  "fields": [
   {
@@ -40,12 +41,23 @@
    "label": "Goods or Service Selection",
    "options": "\nGoods Item Group\nService Item Group",
    "reqd": 1
+  },
+  {
+   "fieldname": "datev_export_section",
+   "fieldtype": "Section Break",
+   "label": "DATEV Export"
+  },
+  {
+   "default": "0",
+   "fieldname": "include_header_in_csv",
+   "fieldtype": "Check",
+   "label": "Include Header in CSV"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-11-14 20:15:55.912740",
+ "modified": "2024-03-11 15:57:38.687485",
  "modified_by": "Administrator",
  "module": "German Accounting",
  "name": "German Accounting Settings",
