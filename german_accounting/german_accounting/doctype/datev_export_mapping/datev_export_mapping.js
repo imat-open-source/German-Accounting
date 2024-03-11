@@ -33,7 +33,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 						args: {
 							filters: {
 								'month': data.month,
-								'exported_on': true
+								'unexported_sales_invoice': true
 							}
 						},
 						async: false,
@@ -41,8 +41,10 @@ frappe.ui.form.on('DATEV Export Mapping', {
 							if (r.message) {
 								let columns = r.message[0];
 								let rows = r.message[1];
+								console.log(columns);
+								console.log(rows);
 								var result = [];
-								if (rows.length < 1) {
+								if (rows.length == 0) {
 									frappe.throw("No data found!")
 								}
 								let sales_invoices = rows.map(row => row.invoice_no);
@@ -97,7 +99,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 											const formData = new FormData();
 
 											// Append the Blob as a file to the FormData object
-											formData.append('file', blob, 'report.csv');
+											formData.append('file', blob, 'report-' + datev_export_log_name +'.csv');
 											formData.append('folder', "Home/Attachments");						
 											formData.append('doctype', 'DATEV Export Log');
 											formData.append('docname', datev_export_log_name);
