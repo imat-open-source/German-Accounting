@@ -81,7 +81,6 @@ def get_data(filters):
 			merged_values['cost_center'] = entry['cost_center']
 			merged_values['tax_id'] = entry['tax_id']
 			merged_values['currency'] = entry['currency']
-			merged_values['1_col'] = '1'
 
 		merged_data[key] = merged_values
 
@@ -154,6 +153,12 @@ def get_columns():
 			"width": 170
 		},
 		{
+			"label": _(""),
+			"fieldtype": "Data",
+			"fieldname": "col_space2",
+			"width": 20
+		},
+		{
 			"label": _("posting_date"),
 			"fieldtype": "Data",
 			"fieldname": "posting_date",
@@ -175,12 +180,6 @@ def get_columns():
 		{
 			"label": _(""),
 			"fieldtype": "Data",
-			"fieldname": "col_space2",
-			"width": 20
-		},
-		{
-			"label": _(""),
-			"fieldtype": "Data",
 			"fieldname": "col_space3",
 			"width": 20
 		},
@@ -194,6 +193,12 @@ def get_columns():
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space5",
+			"width": 20
+		},
+		{
+			"label": _(""),
+			"fieldtype": "Data",
+			"fieldname": "col_space6",
 			"width": 20
 		},
 		{
@@ -237,14 +242,9 @@ def get_columns():
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "1_col",
+			"one_col": True,
 			"width": 160
-		},
-		{
-			"label": _(""),
-			"fieldtype": "Data",
-			"fieldname": "col_space9",
-			"width": 20
-		},
+		}
 	]
 
 	return columns
