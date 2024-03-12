@@ -183,6 +183,6 @@ rows.forEach(row => {
 	});
 	returnStr += "\r\n";
 });
-return returnStr;
+	return returnStr.trimEnd();
 };
   
