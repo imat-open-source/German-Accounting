@@ -152,6 +152,7 @@ def get_columns():
 			"fieldtype": "Link",
 			"fieldname": "invoice_no",
 			"options": "Sales Invoice",
+			"is_quoted_in_csv": 1,
 			"custom_header": "invoice no.",
 			"width": 170
 		},
