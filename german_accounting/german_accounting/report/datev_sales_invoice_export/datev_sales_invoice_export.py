@@ -130,19 +130,21 @@ def get_columns():
 			"label": _("total"),
 			"fieldtype": "Data",
 			"fieldname": "total",
+			"custom_header": "amount",
 			"width": 100
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space1",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _("debit_to"),
 			"fieldtype": "Data",
 			"fieldname": "debit_to",
-			"is_quoted_in_csv": 1,
+			"custom_header": "customer",
 			"width": 90
 		},
 		{
@@ -150,73 +152,85 @@ def get_columns():
 			"fieldtype": "Link",
 			"fieldname": "invoice_no",
 			"options": "Sales Invoice",
+			"is_quoted_in_csv": 1,
+			"custom_header": "invoice no.",
 			"width": 170
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space2",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _("posting_date"),
 			"fieldtype": "Data",
 			"fieldname": "posting_date",
+			"custom_header": "invoice date",
 			"width": 100
 		},
 		{
-			"label": _("G/L account"),
+			"label": _("income_account"),
 			"fieldtype": "Data",
 			"fieldname": "income_account",
+			"custom_header": "G/L account",
 			"width": 160
 		},
 		{
 			"label": _("cost_center"),
 			"fieldtype": "Data",
 			"fieldname": "cost_center",
-			# "options": "Account",
+			"custom_header": "cost centre",
 			"width": 120
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space3",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space4",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space5",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space6",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _("tax_id"),
 			"fieldtype": "Data",
 			"fieldname": "tax_id",
+			"custom_header": "Vat-Id",
 			"width": 110
 		},
 		{
-			"label": _("tax_rate"),
+			"label": _("item_tax_rate"),
 			"fieldtype": "Data",
 			"fieldname": "item_tax_rate",
+			"custom_header": "Tax rate",
 			"width": 120
 		},
 		{
 			"label": _("currency"),
 			"fieldtype": "Data",
 			"fieldname": "currency",
+			"custom_header": "currency",
 			"is_quoted_in_csv": 1,
 			"width": 110
 		},
@@ -224,24 +238,28 @@ def get_columns():
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space6",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space7",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "col_space8",
+			"custom_header": "",
 			"width": 20
 		},
 		{
 			"label": _(""),
 			"fieldtype": "Data",
 			"fieldname": "1_col",
+			"custom_header": "",
 			"one_col": True,
 			"width": 160
 		}

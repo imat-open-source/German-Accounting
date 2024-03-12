@@ -55,7 +55,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 								let sales_invoices = rows.map(row => row.invoice_no);
 
 								if (include_header_in_csv) {
-									let field_mapping_table = columns.map(column => column.label);
+									let field_mapping_table = columns.map(column => column.custom_header);
 									result.push(field_mapping_table);
 								}
 
@@ -65,7 +65,6 @@ frappe.ui.form.on('DATEV Export Mapping', {
 									columns.forEach(function (mapping) {
 										let mapping_label = mapping.label;
 										let one_col = mapping.one_col;
-										// debugger;
 										if ((mapping_label !== "") && mapping_label in row) {
 											if (mapping.is_quoted_in_csv) {
 												csv_row.push('"'+row[mapping_label]+'"');
@@ -76,12 +75,10 @@ frappe.ui.form.on('DATEV Export Mapping', {
 										}
 										else {
 											if (one_col) {
-												debugger;
 												csv_row.push("1");
 											} else {
 												csv_row.push("");
 											}
-											// csv_row.push([""]);
 										}
 									});
 								
@@ -176,13 +173,13 @@ function get_si_field_options() {
 }
 
 const createCsv = (rows, delimiter) => {
-let returnStr = "";
-rows.forEach(row => {
-	row.forEach(field => {
-		returnStr += field + delimiter;
+	let returnStr = "";
+	rows.forEach(row => {
+		row.forEach(field => {
+			returnStr += field + delimiter;
+		});
+		returnStr += "\r\n";
 	});
-	returnStr += "\r\n";
-});
-return returnStr;
+	return returnStr.trimEnd();
 };
   

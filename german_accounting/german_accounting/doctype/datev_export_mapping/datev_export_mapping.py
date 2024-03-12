@@ -38,12 +38,9 @@ def create_log(month, datev_exp_map, sales_invoices=[]):
 	log_doc.save(ignore_permissions=True)
 	
 	# update exported on in SI
-	# month_start_date = get_first_day(getdate())
-	# si_list = frappe.db.get_list('Sales Invoice', filters=[['posting_date', 'between', [month_start_date, today()]], ['custom_exported_on', "=", ""]])
 	for si in sales_invoices:
 		frappe.db.set_value("Sales Invoice", si, "custom_exported_on", exported_on)
 		
 	frappe.msgprint(_("A DATEV Export Log "+get_link_to_form("DATEV Export Log", log_doc.name) + " has been created for "+ month +" month containing a *.csv and *.pdf that can be downloaded"))
 	# time.sleep(5)
 	return log_doc.name
-	# return "abcd" #log_doc.name
