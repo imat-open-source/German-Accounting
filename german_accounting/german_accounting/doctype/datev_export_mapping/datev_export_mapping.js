@@ -55,7 +55,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 								let sales_invoices = rows.map(row => row.invoice_no);
 
 								if (include_header_in_csv) {
-									let field_mapping_table = columns.map(column => column.label);
+									let field_mapping_table = columns.map(column => column.custom_header);
 									result.push(field_mapping_table);
 								}
 
