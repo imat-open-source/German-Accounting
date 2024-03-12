@@ -171,7 +171,7 @@ def get_columns():
 			"width": 100
 		},
 		{
-			"label": _("G/L account"),
+			"label": _("income_account"),
 			"fieldtype": "Data",
 			"fieldname": "income_account",
 			"custom_header": "G/L account",
@@ -221,7 +221,7 @@ def get_columns():
 			"width": 110
 		},
 		{
-			"label": _("tax_rate"),
+			"label": _("item_tax_rate"),
 			"fieldtype": "Data",
 			"fieldname": "item_tax_rate",
 			"custom_header": "Tax rate",
