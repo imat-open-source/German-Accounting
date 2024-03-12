@@ -181,7 +181,6 @@ def get_columns():
 			"label": _("cost_center"),
 			"fieldtype": "Data",
 			"fieldname": "cost_center",
-			# "options": "Account",
 			"custom_header": "cost centre",
 			"width": 120
 		},
