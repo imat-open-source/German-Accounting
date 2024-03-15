@@ -10,24 +10,6 @@ import json
 
 
 @frappe.whitelist()
-def get_datev_export_data(month):
-	filters = {
-		'month': month,
-		'unexported_sales_invoice': 1
-	}
-	filters['csv_pdf'] = 'CSV'
-	csv_data = execute(filters)
-	filters['csv_pdf'] = 'PDF'
-	pdf_data = execute(filters)
-
-	return {
-		"csv" : csv_data,
-		"pdf" : pdf_data
-	}
-
-
-
-
 def execute(filters=None):
 	if isinstance(filters, str):
 		filters = json.loads(filters)
