@@ -10,12 +10,30 @@ import json
 
 
 @frappe.whitelist()
+def get_datev_export_data(month):
+	filters = {
+		'month': month,
+		'unexported_sales_invoice': 1
+	}
+	filters['csv_pdf'] = 'CSV'
+	csv_data = execute(filters)
+	filters['csv_pdf'] = 'PDF'
+	pdf_data = execute(filters)
+
+	return {
+		"csv" : csv_data,
+		"pdf" : pdf_data
+	}
+
+
+
+
 def execute(filters=None):
 	if isinstance(filters, str):
 		filters = json.loads(filters)
 	filters = frappe._dict(filters or {})
 	columns, data = [], []
-	columns = get_columns()
+	columns = get_columns(filters)
 	data = get_data(filters)
 
 	return columns, data
@@ -29,24 +47,33 @@ def get_data(filters):
 	"""
 		SELECT
 			si.name as invoice_no, si.posting_date, si.is_return,
-			si.cost_center, si.tax_id, si.currency, si.total, si.debit_to,
-			sii.income_account, sii.item_tax_rate
-		FROM `tabSales Invoice` si, `tabSales Invoice Item` sii
-		WHERE si.docstatus!=2 AND si.name = sii.parent %s
+			si.cost_center, si.tax_id, si.currency, si.grand_total, 
+			si.debit_to, si.custom_exported_on, co.code, ad.country,
+			si.customer, sii.income_account, sii.item_tax_rate
+		FROM `tabSales Invoice` si, `tabSales Invoice Item` sii, `tabAddress` ad, `tabCountry` co
+		WHERE si.docstatus!=2 AND si.name = sii.parent AND si.customer_address=ad.name AND ad.country=co.name %s
 	"""% conditions,filters, as_dict = 1)
 	
 	invoices_map = {}
 	for entry in data:
 		h_or_s = "S" if entry.get('is_return') else "H"
+		grand_total = cstr(("%.2f" % flt(entry.grand_total))).replace(",","").replace(".","")
 		invoices_map.setdefault(entry.get('invoice_no'), []).append({
 			"posting_date": format_date(entry.get('posting_date'), "ddmm"),
+			"pdf_posting_date": format_date(entry.get('posting_date'), "dd.mm.YYYY"),
 			"cost_center": entry.get('cost_center').split("-")[0].replace(" ", "") if entry.get('cost_center') else "",
 			"tax_id": entry.get('tax_id') if entry.get('tax_id') else "",
 			"currency": entry.get('currency'),
-			"total": "{0}{1}".format(str(("%.2f" % flt(entry.total))).replace(",","").replace(".",""),h_or_s),
+			"grand_total": "{0}{1}".format(grand_total, h_or_s),
+			"pdf_total_datev": grand_total,
+			"pdf_total": entry.grand_total,
 			"debit_to": entry.get('debit_to'),
 			"item_tax_rate": entry.get('item_tax_rate'),
 			"income_account": entry.get('income_account'),
+			"custom_exported_on": entry.get('custom_exported_on'),
+			"country": entry.code,
+			"journal_text": entry.customer if entry.country == 'Germany' else entry.code + ", " + entry.customer, 
+			"dc": h_or_s
 		})
 	
 	merged_data = {}
@@ -76,27 +103,37 @@ def get_data(filters):
 				merged_values['item_tax_rate'] = 'multiple tax rates'
 
 			merged_values['posting_date'] = entry['posting_date']
-			merged_values['total'] = entry['total']
+			merged_values['pdf_posting_date'] = entry['pdf_posting_date']
+			merged_values['custom_exported_on'] = entry['custom_exported_on']
+			merged_values['grand_total'] = entry['grand_total']
 			merged_values['debit_to'] = entry['debit_to']
 			merged_values['cost_center'] = entry['cost_center']
 			merged_values['tax_id'] = entry['tax_id']
+			merged_values['dc'] = entry['dc']
 			merged_values['currency'] = entry['currency']
+			merged_values['country'] = entry['country']
+			merged_values['journal_text'] = entry['journal_text']
+			merged_values['pdf_total_datev'] = entry['pdf_total_datev']
+			merged_values['pdf_total'] = entry['pdf_total']
 
 		merged_data[key] = merged_values
 
 	data = []
-	for inv_name, inv_data in dict(merged_data).items():
+	for inv_name, inv_data in merged_data.items():
 		row = {}
 		row['invoice_no'] = inv_name
+		row['voucher_type'] = 'R'
 		row.update(inv_data)
 		if row.get('debit_to'):
 			### Debitor No DATEV 
 			deb_no_datev = row['debit_to'].split("-")[0].replace(" ", "")
+			row['debit_to'] = deb_no_datev
 			if len(deb_no_datev) < 9:
 				n = 9 - len(deb_no_datev)
 				zeros = '0' * n
 				deb_no_datev += zeros
-			row['debit_to'] = deb_no_datev
+			# row['debit_to'] = deb_no_datev
+			row['debitor_no_datev'] = deb_no_datev
 
 		data.append(row)
 
@@ -124,12 +161,12 @@ def get_conditions(filters):
 
 	return conditions
 
-def get_columns():
-	columns = [
+def get_columns(filters):
+	csv_columns = [
 		{
-			"label": _("total"),
+			"label": _("grand_total"),
 			"fieldtype": "Data",
-			"fieldname": "total",
+			"fieldname": "grand_total",
 			"custom_header": "amount",
 			"width": 100
 		},
@@ -141,9 +178,9 @@ def get_columns():
 			"width": 20
 		},
 		{
-			"label": _("debit_to"),
+			"label": _("debitor_no_datev"),
 			"fieldtype": "Data",
-			"fieldname": "debit_to",
+			"fieldname": "debitor_no_datev",
 			"custom_header": "customer",
 			"width": 90
 		},
@@ -265,4 +302,117 @@ def get_columns():
 		}
 	]
 
-	return columns
+	pdf_columns = [
+		{
+			"label": _("Voucher Type"),
+			"fieldtype": "Data",
+			"fieldname": "voucher_type",
+			"custom_header": "Belegart",
+			"width": 160
+		},
+		{
+			"label": _("DC"),
+			"fieldtype": "Data",
+			"fieldname": "dc",
+			"custom_header": "SH",
+			"width": 160
+		},
+		{
+			"label": _("Total"),
+			"fieldtype": "Data",
+			"fieldname": "pdf_total",
+			"custom_header": "Betrag",
+			"width": 160
+		},
+		{
+			"label": _("Total DATEV"),
+			"fieldtype": "Data",
+			"fieldname": "pdf_total_datev",
+			"custom_header": "Betrag DATEV",
+			"width": 160
+		},
+		{
+			"label": _("Income Account"),
+			"fieldtype": "Data",
+			"fieldname": "income_account",
+			"custom_header": "Erlöskonto",
+			"width": 160
+		},
+		{
+			"label": _("Voucher No"),
+			"fieldtype": "Data",
+			"fieldname": "invoice_no",
+			"custom_header": "Beleg Nr",
+			"width": 160
+		},
+		{
+			"label": _("Posting Date"),
+			"fieldtype": "Data",
+			"fieldname": "pdf_posting_date",
+			"custom_header": "Buchungsdatum",
+			"width": 160
+		},
+		{
+			"label": _("Shortdate"),
+			"fieldtype": "Data",
+			"fieldname": "posting_date",
+			"custom_header": "Kurzdatum",
+			"width": 160
+		},
+		{
+			"label": _("Debitor No"),
+			"fieldtype": "Data",
+			"fieldname": "debit_to",
+			"custom_header": "Deb.-Nr.",
+			"width": 160
+		},
+		{
+			"label": _("Debitor No DATEV"),
+			"fieldtype": "Data",
+			"fieldname": "debitor_no_datev",
+			"custom_header": "Deb.-Nr. Datev",
+			"width": 160
+		},
+		{
+			"label": _("Country"),
+			"fieldtype": "Data",
+			"fieldname": "country",
+			"custom_header": "Land",
+			"width": 160
+		},
+		{
+			"label": _("Journal Text"),
+			"fieldtype": "Data",
+			"fieldname": "journal_text",
+			"custom_header": "Buchtext",
+			"width": 160
+		},
+		{
+			"label": _("Tax Percentige"),
+			"fieldtype": "Data",
+			"fieldname": "item_tax_rate",
+			"custom_header": "St.-satz",
+			"width": 160
+		},
+		{
+			"label": _("Currency"),
+			"fieldtype": "Data",
+			"fieldname": "currency",
+			"custom_header": "Währung",
+			"width": 160
+		},
+		{
+			"label": _("Exportdate"),
+			"fieldtype": "Data",
+			"fieldname": "custom_exported_on",
+			"custom_header": "Exportdatum",
+			"width": 160
+		},
+	]
+
+	if filters.get("csv_pdf") == "CSV":
+		return csv_columns
+	elif  filters.get("csv_pdf") == "PDF":
+		return pdf_columns
+	else:
+		return []

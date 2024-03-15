@@ -31,6 +31,14 @@ frappe.query_reports["DATEV Sales Invoice Export"] = {
             "label": __('Sales Invoice Exported'),
             "fieldtype": 'Date',
             "hidden": 1
+        },
+        {
+            "fieldname": 'csv_pdf',
+            "label": __('CSV or pdf'),
+            "fieldtype": "Select",
+            "default": "CSV",
+            "options": "\nCSV\nPDF",
+            "reqd": 1
         }
     ]
 };
