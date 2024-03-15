@@ -1,3 +1,5 @@
+{% let sumPdfNetTotal = 0 %}
+{% let sumPdfTotal = 0 %}
 <h2 class="text-center">{%= __("Title") %}</h2>
 <h4 >
 	{% if (filters.month) { %}
@@ -30,6 +32,8 @@
 	</thead>
 	<tbody>
 		{% for(var i=0, l=data.length; i<l; i++) { %}
+			{% sumPdfNetTotal+=parseFloat(data[i].pdf_net_total)%}
+			{% sumPdfTotal+=parseFloat(data[i].pdf_total)%}
         <tr>
             <td style="text-align: right">{%= data[i].voucher_type%}</td>
             <td style="text-align: right">{%= data[i].dc%}</td>
@@ -52,4 +56,7 @@
 		{% } %}
 	</tbody>
 </table>
+
+<p>Net Total {%= sumPdfNetTotal %}</p>
+<p>Gross Total {%= sumPdfTotal %}</p>
 <p class="text-right text-muted">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</p>

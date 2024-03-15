@@ -28,10 +28,10 @@ def get_data(filters):
 	data = frappe.db.sql(
 	"""
 		SELECT
-			si.name as invoice_no, si.posting_date, si.is_return,
-			si.cost_center, si.tax_id, si.currency, si.grand_total, 
-			si.debit_to, si.custom_exported_on, co.code, ad.country,
-			si.customer, sii.income_account, sii.item_tax_rate
+			si.name as invoice_no, si.posting_date, si.is_return,si.cost_center, 
+			si.tax_id, si.currency, si.grand_total, si.net_total as pdf_net_total,
+			si.debit_to, si.custom_exported_on, co.code, ad.country, si.customer, 
+			sii.income_account, sii.item_tax_rate
 		FROM `tabSales Invoice` si, `tabSales Invoice Item` sii, `tabAddress` ad, `tabCountry` co
 		WHERE si.docstatus!=2 AND si.name = sii.parent AND si.customer_address=ad.name AND ad.country=co.name %s
 	"""% conditions,filters, as_dict = 1)
@@ -47,8 +47,9 @@ def get_data(filters):
 			"tax_id": entry.get('tax_id') if entry.get('tax_id') else "",
 			"currency": entry.get('currency'),
 			"grand_total": "{0}{1}".format(grand_total, h_or_s),
-			"pdf_total_datev": grand_total,
+			"pdf_total_datev": entry.pdf_net_total,
 			"pdf_total": entry.grand_total,
+			"pdf_net_total": entry.pdf_net_total,
 			"debit_to": entry.get('debit_to'),
 			"item_tax_rate": entry.get('item_tax_rate'),
 			"income_account": entry.get('income_account'),
@@ -96,6 +97,7 @@ def get_data(filters):
 			merged_values['country'] = entry['country']
 			merged_values['journal_text'] = entry['journal_text']
 			merged_values['pdf_total_datev'] = entry['pdf_total_datev']
+			merged_values['pdf_net_total'] = entry['pdf_net_total']
 			merged_values['pdf_total'] = entry['pdf_total']
 
 		merged_data[key] = merged_values
