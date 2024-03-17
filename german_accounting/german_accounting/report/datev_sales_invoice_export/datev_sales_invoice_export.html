@@ -57,6 +57,6 @@
 	</tbody>
 </table>
 
-<p>Net Total {%= sumPdfNetTotal %}</p>
-<p>Gross Total {%= sumPdfTotal %}</p>
+<p>Net Total {%= format_currency(sumPdfNetTotal) %}</p>
+<p>Gross Total {%= format_currency(sumPdfTotal) %}</p>
 <p class="text-right text-muted">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</p>
