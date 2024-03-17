@@ -110,7 +110,8 @@ frappe.ui.form.on('DATEV Export Mapping', {
 									freeze_message: __("Creating Log"),
 									callback: function(r){
 										if (r.message) {
-											let datev_export_log_name = r.message;
+											let datev_export_log_name = r.message.name;
+											let datev_exported_on = r.message.exported_on;
 											frappe.dom.unfreeze();
 											// CSV
 											// Create a Blob containing the CSV data
@@ -125,6 +126,7 @@ frappe.ui.form.on('DATEV Export Mapping', {
 													filters: {
 														'month': data.month,
 														'csv_pdf': 'PDF',
+														'exported_on': datev_exported_on,
 														'unexported_sales_invoice': false
 													}
 												},
