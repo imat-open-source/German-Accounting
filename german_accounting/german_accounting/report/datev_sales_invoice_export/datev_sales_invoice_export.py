@@ -134,6 +134,9 @@ def get_conditions(filters):
 	if filters.get("unexported_sales_invoice"):
 		conditions += " AND coalesce(si.custom_exported_on, '') = '' "
 
+	elif not filters.get("unexported_sales_invoice") and filters.get("exported_on"):
+		conditions += " AND si.custom_exported_on = %(exported_on)s"
+
 	if filters.get("from_date") and filters.get("to_date"):
 		conditions += " AND si.posting_date BETWEEN %(from_date)s AND %(to_date)s"
 	else:
