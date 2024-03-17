@@ -47,21 +47,20 @@ frappe.ui.form.on('DATEV Export Mapping', {
 					// frappe.dom.freeze()
 
 					frappe.call({
-						method: "german_accounting.german_accounting.report.datev_sales_invoice_export.datev_sales_invoice_export.get_datev_export_data",
+						method: "german_accounting.german_accounting.report.datev_sales_invoice_export.datev_sales_invoice_export.execute",
 						args: {
-							'month': data.month
+							filters: {
+								'month': data.month,
+								'csv_pdf': 'CSV',
+								'unexported_sales_invoice': true
+							}
 						},
 						async: false,
 						callback: function(r, rt) {
 							if (r.message) {
-								let csv = r.message.csv;
+								let csv = r.message;
 								let csv_columns = csv[0];
 								let csv_rows = csv[1];
-								
-								let pdf = r.message.pdf;
-								let pdf_columns = pdf[0];
-								let pdf_rows = pdf[1];
-
 								var result = [];
 								if (csv_rows.length == 0) {
 									frappe.throw("No data found!")
@@ -118,122 +117,83 @@ frappe.ui.form.on('DATEV Export Mapping', {
 											const csv = createCsv(result, ";");
 											const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
 
-											// Create a FormData object
-											const formData = new FormData();
+											upload_file(blob, datev_export_log_name, '.csv', 'csv');
 
-											// Append the Blob as a file to the FormData object
-											formData.append('file', blob, 'report-' + datev_export_log_name +'.csv');
-											formData.append('folder', "Home/Attachments");						
-											formData.append('doctype', 'DATEV Export Log');
-											formData.append('docname', datev_export_log_name);
-											formData.append('fieldname', 'csv');
-											formData.append('is_private', '1');											
-
-											fetch('/api/method/upload_file', {
-												headers: {
-													'X-Frappe-CSRF-Token': frappe.csrf_token
-												},
-												method: 'POST',
-												body: formData
-											}).then(res => res.json()).then(data => {			
-												if (data.message){
-													frappe.db.set_value("DATEV Export Log", datev_export_log_name, "csv", data.message.file_url);	
-												}
-											})
-
-											// PDF
-											const content = frappe.render_template(html_format, {
-												title: __("DATEV Sales Invoice"),
-												subtitle: "filters_html",
-												filters: {
-													'month': data.month,
-													// 'exported_on': true
-												},
-												data: pdf_rows,
-												columns: pdf_columns,
-											});
-
-											const html = frappe.render_template('print_template', {
-												title: __("DATEV Sales Invoice"),
-												content: content,
-												base_url: frappe.urllib.get_base_url(),
-												print_css: frappe.boot.print_css,
-												print_settings: {},
-												landscape: false,
-												columns: pdf_columns,
-												lang: frappe.boot.lang,
-												layout_direction: frappe.utils.is_rtl() ? "rtl" : "ltr",
-											});
-
-											//Create a form to place the HTML content
-											var formData1 = new FormData();
-
-											//Push the HTML content into an element
-											formData1.append("html", html);
-											// if (opts.orientation) {
-											// 	formData1.append("orientation", opts.orientation);
-											// }
-											var blob1 = new Blob([], { type: "text/xml" });
-											formData1.append("blob", blob1);
-
-
-											// Make a fetch request
-											fetch("/api/method/frappe.utils.print_format.report_to_pdf", {
-												method: "POST",
-												headers: {
-													"X-Frappe-CSRF-Token": frappe.csrf_token
-												},
-												body: formData1
-											})
-											.then(response => {
-												if (!response.ok) {
-													frappe.throw("Report PDF Generation Failed!");
-												}
-												return response.arrayBuffer(); // Get the response as an ArrayBuffer
-											})
-											.then(arrayBuffer => {
-												// Convert the ArrayBuffer to a Blob
-												var blob = new Blob([arrayBuffer], { type: "application/pdf" });
-												// Create a FormData object
-												const formData = new FormData();
-
-												// Append the Blob as a file to the FormData object
-												formData.append('file', blob, 'report-' + datev_export_log_name +'.pdf');
-												formData.append('folder', "Home/Attachments");						
-												formData.append('doctype', 'DATEV Export Log');
-												formData.append('docname', datev_export_log_name);
-												formData.append('fieldname', 'pdf');
-												formData.append('is_private', '1');											
-
-												fetch('/api/method/upload_file', {
-													headers: {
-														'X-Frappe-CSRF-Token': frappe.csrf_token
-													},
-													method: 'POST',
-													body: formData
-												}).then(res => res.json()).then(data => {			
-													if (data.message){
-														frappe.db.set_value("DATEV Export Log", datev_export_log_name, "pdf", data.message.file_url);	
+											frappe.call({
+												method: "german_accounting.german_accounting.report.datev_sales_invoice_export.datev_sales_invoice_export.execute",
+												args: {
+													filters: {
+														'month': data.month,
+														'csv_pdf': 'PDF',
+														'unexported_sales_invoice': false
 													}
-												})
+												},
+												callback: function (r) {
+													let pdf = r.message;
+													let pdf_columns = pdf[0];
+													let pdf_rows = pdf[1];
 
-												// // Create a URL for the Blob
-												// var objectUrl = URL.createObjectURL(blob);
-												// // Create a hidden a tag to force set report name
-												// let hidden_a_tag = document.createElement("a");
-												// document.body.appendChild(hidden_a_tag);
-												// hidden_a_tag.style = "display: none";
-												// hidden_a_tag.href = objectUrl;
-												// hidden_a_tag.download = "report.pdf";
+													// PDF
+													const content = frappe.render_template(html_format, {
+														title: __("DATEV Sales Invoice"),
+														subtitle: "filters_html",
+														filters: {
+															'month': data.month
+														},
+														data: pdf_rows,
+														columns: pdf_columns,
+													});
 
-												// // Open report in a new window
-												// hidden_a_tag.click();
-												// window.URL.revokeObjectURL(objectUrl);
-											})
-											.catch(error => {
-												// Handle any errors
-												console.error("There was a problem with the fetch operation:", error);
+													const html = frappe.render_template('print_template', {
+														title: __("DATEV Sales Invoice"),
+														content: content,
+														base_url: frappe.urllib.get_base_url(),
+														print_css: frappe.boot.print_css,
+														print_settings: {},
+														landscape: false,
+														columns: pdf_columns,
+														lang: frappe.boot.lang,
+														layout_direction: frappe.utils.is_rtl() ? "rtl" : "ltr",
+													});
+
+													//Create a form to place the HTML content
+													var formData1 = new FormData();
+
+													//Push the HTML content into an element
+													formData1.append("html", html);
+													// if (opts.orientation) {
+													// 	formData1.append("orientation", opts.orientation);
+													// }
+													var blob1 = new Blob([], { type: "text/xml" });
+													formData1.append("blob", blob1);
+
+													// Make a fetch request
+													fetch("/api/method/frappe.utils.print_format.report_to_pdf", {
+														method: "POST",
+														headers: {
+															"X-Frappe-CSRF-Token": frappe.csrf_token
+														},
+														body: formData1
+													})
+													.then(response => {
+														if (!response.ok) {
+															frappe.throw("Report PDF Generation Failed!");
+														}
+														return response.arrayBuffer(); // Get the response as an ArrayBuffer
+													})
+													.then(arrayBuffer => {
+														// Convert the ArrayBuffer to a Blob
+														var blob = new Blob([arrayBuffer], { type: "application/pdf" });
+														upload_file(blob, datev_export_log_name, '.pdf', 'pdf');
+
+													})
+													.catch(error => {
+														// Handle any errors
+														console.error("There was a problem with the fetch operation:", error);
+													});
+												},
 											});
+
 										}
 									}
 								})
@@ -281,6 +241,31 @@ function get_si_field_options() {
 	return options;
 }
 
+const upload_file = (blob, datev_export_log_name, format, field) => {
+	// Create a FormData object
+	const formData = new FormData();
+
+	// Append the Blob as a file to the FormData object
+	formData.append('file', blob, 'report-' + datev_export_log_name + format);
+	formData.append('folder', "Home/Attachments");						
+	formData.append('doctype', 'DATEV Export Log');
+	formData.append('docname', datev_export_log_name);
+	formData.append('fieldname', field);
+	formData.append('is_private', '1');											
+
+	fetch('/api/method/upload_file', {
+		headers: {
+			'X-Frappe-CSRF-Token': frappe.csrf_token
+		},
+		method: 'POST',
+		body: formData
+	}).then(res => res.json()).then(data => {			
+		if (data.message){
+			frappe.db.set_value("DATEV Export Log", datev_export_log_name, field, data.message.file_url);	
+		}
+	})
+};
+  
 const createCsv = (rows, delimiter) => {
 	let returnStr = "";
 	rows.forEach(row => {
