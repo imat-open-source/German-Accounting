@@ -8,6 +8,22 @@ from datetime import datetime
 from collections import defaultdict
 import json
 
+@frappe.whitelist()
+def get_datev_export_data(month):
+	filters = {
+		'month': month,
+		'unexported_sales_invoice': 1
+	}
+	filters['csv_pdf'] = 'CSV'
+	csv_data = execute(filters)
+	filters['csv_pdf'] = 'PDF'
+	pdf_data = execute(filters)
+
+	return {
+		"csv" : csv_data,
+		"pdf" : pdf_data
+	}
+
 
 @frappe.whitelist()
 def execute(filters=None):
@@ -131,7 +147,7 @@ def get_data(filters):
 def get_debtors_csv_data(data):
 	customers = list(set([d.get("customer") for d in data]))
 
-	return frappe.db.sql(
+	debtors_csv_data = frappe.db.sql(
 	"""
 		SELECT
 			cust.tax_id, cust.name as customer, acc.account as debitor_no_datev
@@ -142,6 +158,18 @@ def get_debtors_csv_data(data):
 		WHERE 
 			cust.name in (%s)
 	"""% ", ".join(["%s"] * len(customers)), tuple(customers), as_dict=1)
+
+	for d in debtors_csv_data:
+		d['debitor_no_datev'] = d['debitor_no_datev'] if d.get("debitor_no_datev") else ""
+		if d.get("debitor_no_datev"):
+			debitor_no_datev = d['debitor_no_datev'].split("-")[0].replace(" ", "")
+			if len(debitor_no_datev) < 9:
+				n = 9 - len(debitor_no_datev)
+				zeros = '0' * n
+				debit_no_datev += zeros
+			d['debitor_no_datev'] = debitor_no_datev
+
+	return debtors_csv_data
 
 
 def get_conditions(filters):
