@@ -33,7 +33,7 @@ def get_data(filters):
 			si.debit_to, si.custom_exported_on, co.code, ad.country, si.customer, 
 			sii.income_account, sii.item_tax_rate
 		FROM `tabSales Invoice` si, `tabSales Invoice Item` sii, `tabAddress` ad, `tabCountry` co
-		WHERE si.docstatus!=2 AND si.name = sii.parent AND si.customer_address=ad.name AND ad.country=co.name %s
+		WHERE si.docstatus=1 AND si.name = sii.parent AND si.customer_address=ad.name AND ad.country=co.name %s
 	"""% conditions,filters, as_dict = 1)
 	
 	invoices_map = {}
