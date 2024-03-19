@@ -3,7 +3,6 @@
  "allow_rename": 1,
  "autoname": "DATEV-Export-.month.-.year.-.####",
  "creation": "2024-02-26 13:07:22.730340",
- "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -11,7 +10,10 @@
   "month",
   "exported_on",
   "datev_export_mapping",
-  "year"
+  "year",
+  "sales_invoice_csv",
+  "sales_invoice_pdf",
+  "debtors_csv"
  ],
  "fields": [
   {
@@ -41,12 +43,27 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Year"
+  },
+  {
+   "fieldname": "sales_invoice_csv",
+   "fieldtype": "Attach",
+   "label": "Sales Invoice CSV"
+  },
+  {
+   "fieldname": "sales_invoice_pdf",
+   "fieldtype": "Attach",
+   "label": "Sales Invoice PDF"
+  },
+  {
+   "fieldname": "debtors_csv",
+   "fieldtype": "Attach",
+   "label": "Debtors CSV"
   }
  ],
  "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-02-27 17:56:21.247613",
+ "modified": "2024-03-18 19:15:33.421303",
  "modified_by": "Administrator",
  "module": "German Accounting",
  "name": "DATEV Export Log",

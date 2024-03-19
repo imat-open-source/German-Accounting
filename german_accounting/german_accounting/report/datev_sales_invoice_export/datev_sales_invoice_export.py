@@ -33,7 +33,7 @@ def get_data(filters):
 			si.debit_to, si.custom_exported_on, co.code, ad.country, si.customer, 
 			sii.income_account, sii.item_tax_rate
 		FROM `tabSales Invoice` si, `tabSales Invoice Item` sii, `tabAddress` ad, `tabCountry` co
-		WHERE si.docstatus!=2 AND si.name = sii.parent AND si.customer_address=ad.name AND ad.country=co.name %s
+		WHERE si.docstatus=1 AND si.name = sii.parent AND si.customer_address=ad.name AND ad.country=co.name %s
 	"""% conditions,filters, as_dict = 1)
 	
 	invoices_map = {}
@@ -55,7 +55,8 @@ def get_data(filters):
 			"income_account": entry.get('income_account'),
 			"custom_exported_on": entry.get('custom_exported_on'),
 			"country": entry.code,
-			"journal_text": entry.customer if entry.country == 'Germany' else entry.code + ", " + entry.customer, 
+			"journal_text": entry.customer if entry.country == 'Germany' else entry.code + ", " + entry.customer,
+			"customer": entry.customer,
 			"dc": h_or_s
 		})
 	
@@ -99,6 +100,7 @@ def get_data(filters):
 			merged_values['pdf_total_datev'] = entry['pdf_total_datev']
 			merged_values['pdf_net_total'] = entry['pdf_net_total']
 			merged_values['pdf_total'] = entry['pdf_total']
+			merged_values['customer'] = entry['customer']
 
 		merged_data[key] = merged_values
 
@@ -121,7 +123,37 @@ def get_data(filters):
 
 		data.append(row)
 
+	if filters.get("export_type") == "Debtors CSV":
+		data = get_debtors_csv_data(data)
+
 	return data
+
+def get_debtors_csv_data(data):
+	customers = list(set([d.get("customer") for d in data]))
+
+	debtors_csv_data = frappe.db.sql(
+	"""
+		SELECT
+			cust.tax_id, cust.name as customer, acc.account as debitor_no_datev
+		FROM 
+			`tabCustomer` cust
+		LEFT JOIN
+			`tabParty Account` acc ON cust.name = acc.parent
+		WHERE 
+			cust.name in (%s)
+	"""% ", ".join(["%s"] * len(customers)), tuple(customers), as_dict=1)
+
+	for d in debtors_csv_data:
+		d['debitor_no_datev'] = d['debitor_no_datev'] if d.get("debitor_no_datev") else ""
+		if d.get("debitor_no_datev"):
+			debitor_no_datev = d['debitor_no_datev'].split("-")[0].replace(" ", "")
+			if len(debitor_no_datev) < 9:
+				n = 9 - len(debitor_no_datev)
+				zeros = '0' * n
+				debit_no_datev += zeros
+			d['debitor_no_datev'] = debitor_no_datev
+
+	return debtors_csv_data
 
 
 def get_conditions(filters):
@@ -149,7 +181,7 @@ def get_conditions(filters):
 	return conditions
 
 def get_columns(filters):
-	csv_columns = [
+	sales_inv_csv_columns = [
 		{
 			"label": _("grand_total"),
 			"fieldtype": "Data",
@@ -289,7 +321,7 @@ def get_columns(filters):
 		}
 	]
 
-	pdf_columns = [
+	sales_inv_pdf_columns = [
 		{
 			"label": _("Voucher Type"),
 			"fieldtype": "Data",
@@ -397,9 +429,35 @@ def get_columns(filters):
 		},
 	]
 
-	if filters.get("csv_pdf") == "CSV":
-		return csv_columns
-	elif  filters.get("csv_pdf") == "PDF":
-		return pdf_columns
+	debtors_csv_columns = [
+		{
+			"label": _("Debitor No DATEV"),
+			"fieldtype": "Data",
+			"fieldname": "debitor_no_datev",
+			"custom_header": "Debitoren Nummer",
+			"width": 160
+		},
+		{
+			"label": _("Customer Name"),
+			"fieldtype": "Data",
+			"fieldname": "customer",
+			"custom_header": "Kundenname",
+			"width": 160
+		},
+		{
+			"label": _("Tax ID"),
+			"fieldtype": "Data",
+			"fieldname": "tax_id",
+			"custom_header": "Tax ID",
+			"width": 160
+		}
+	]
+
+	if filters.get("export_type") == "Sales Invoice CSV":
+		return sales_inv_csv_columns
+	elif  filters.get("export_type") == "Sales Invoice PDF":
+		return sales_inv_pdf_columns
+	elif  filters.get("export_type") == "Debtors CSV":
+		return debtors_csv_columns
 	else:
 		return []
