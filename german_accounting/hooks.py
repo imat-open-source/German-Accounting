@@ -29,6 +29,9 @@ app_license = "MIT"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
+doctype_js = {
+    "Customer" : "public/js/customer.js"
+}
 
 doc_events = {
     "Quotation": {

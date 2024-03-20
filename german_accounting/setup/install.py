@@ -152,10 +152,28 @@ def get_custom_fields():
 		}	
 	]
 
+	custom_fields_customer = [
+		{
+			"label": "German Accounting",
+			"fieldname": "imat",
+			"fieldtype": "Section Break",
+			"insert_after": None,
+		},
+		{
+			"label": "Billing Address",
+			"fieldname": "billing_address",
+			"fieldtype": "Link",
+			"description": "This represents the standard billing address used for the export for DATEV debtors file.",
+			"insert_after": "imat",
+			"options": "Address"
+		}
+	]
+
 	return {
 		"Quotation": custom_fields_quotation,
 		"Sales Order": custom_fields_so,
 		"Item Group": custom_fields_item_group,
 		"Sales Invoice": custom_fields_si,
-		"Country": custom_fields_country
+		"Country": custom_fields_country,
+		"Customer": custom_fields_customer
 	}
