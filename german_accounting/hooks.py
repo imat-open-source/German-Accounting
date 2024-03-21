@@ -10,6 +10,19 @@ app_license = "MIT"
 # Includes in <head>
 # ------------------
 
+fixtures = [
+	{
+		"dt": "Property Setter",
+		"filters": {
+			"name": (
+				"in",
+				[
+					"Address-is_primary_address-description"
+				],
+			)
+		},
+	},
+]
 # include js, css files in header of desk.html
 # app_include_css = "/assets/german_accounting/css/german_accounting.css"
 # app_include_js = "/assets/german_accounting/js/german_accounting.js"

@@ -1,0 +1,19 @@
+[
+ {
+  "default_value": null,
+  "doc_type": "Address",
+  "docstatus": 0,
+  "doctype": "Property Setter",
+  "doctype_or_field": "DocField",
+  "field_name": "is_primary_address",
+  "modified": "2024-03-21 18:26:50.757329",
+  "name": "Address-is_primary_address-description",
+  "parent": null,
+  "parentfield": null,
+  "parenttype": null,
+  "property": "description",
+  "property_type": "Text",
+  "row_name": null,
+  "value": "This check can only be set once per party that is linked in the Links table in the Reference section of this page"
+ }
+]
