@@ -155,7 +155,7 @@ def get_custom_fields():
 	custom_fields_customer = [
 		{
 			"label": "German Accounting",
-			"fieldname": "imat",
+			"fieldname": "german_accounting_section",
 			"fieldtype": "Section Break",
 			"insert_after": None,
 		},
@@ -164,7 +164,7 @@ def get_custom_fields():
 			"fieldname": "billing_address",
 			"fieldtype": "Link",
 			"description": "This represents the standard billing address used for the export for DATEV debtors file.",
-			"insert_after": "imat",
+			"insert_after": "german_accounting_section",
 			"options": "Address"
 		}
 	]
