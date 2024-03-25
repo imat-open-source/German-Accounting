@@ -134,11 +134,15 @@ def get_debtors_csv_data(data):
 	debtors_csv_data = frappe.db.sql(
 	"""
 		SELECT
-			cust.tax_id, cust.name as customer, acc.account as debitor_no_datev
+			DISTINCT cust.tax_id, cust.name as customer, acc.account as debitor_no_datev,
+			addrs.address_line1, addrs.address_line2, addrs.city, addrs.pincode, 
+			(select cn.code from tabCountry as cn WHERE cn.name = addrs.country ) as country_code
 		FROM 
 			`tabCustomer` cust
 		LEFT JOIN
 			`tabParty Account` acc ON cust.name = acc.parent
+		LEFT JOIN
+			tabAddress addrs on cust.billing_address = addrs.name
 		WHERE 
 			cust.name in (%s)
 	"""% ", ".join(["%s"] * len(customers)), tuple(customers), as_dict=1)
@@ -450,7 +454,43 @@ def get_columns(filters):
 			"fieldname": "tax_id",
 			"custom_header": "Tax ID",
 			"width": 160
-		}
+		},
+		{
+			"label": _("Addressline 1"),
+			"fieldtype": "Data",
+			"fieldname": "address_line1",
+			"custom_header": "Addressline 1",
+			"width": 160
+		},
+		{
+			"label": _("Addressline 2"),
+			"fieldtype": "Data",
+			"fieldname": "address_line2",
+			"custom_header": "Addressline 2",
+			"width": 160
+		},
+		{
+			"label": _("Postal Code"),
+			"fieldtype": "Data",
+			"fieldname": "pincode",
+			"custom_header": "postal_code",
+			"width": 160
+		},
+		{
+			"label": _("City"),
+			"fieldtype": "Data",
+			"fieldname": "city",
+			"custom_header": "city",
+			"width": 160
+		},
+		{
+			"label": _("Country Code"),
+			"fieldtype": "Data",
+			"fieldname": "country_code",
+			"custom_header": "country_code",
+			"width": 160
+		},
+		
 	]
 
 	if filters.get("export_type") == "Sales Invoice CSV":
