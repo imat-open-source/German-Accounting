@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "goods_item_group",
+  "track_logs",
   "column_break_cx7ey",
   "service_item_group",
   "good_or_service_selection",
@@ -52,12 +53,18 @@
    "fieldname": "include_header_in_csv",
    "fieldtype": "Check",
    "label": "Include Header in CSV"
+  },
+  {
+   "default": "0",
+   "fieldname": "track_logs",
+   "fieldtype": "Check",
+   "label": "Track Logs"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-03-11 15:57:38.687485",
+ "modified": "2024-03-26 09:10:35.994938",
  "modified_by": "Administrator",
  "module": "German Accounting",
  "name": "German Accounting Settings",
@@ -75,6 +82,5 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC",
- "states": []
+ "sort_order": "DESC"
 }
