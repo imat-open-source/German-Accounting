@@ -1,0 +1,62 @@
+{% let sumPdfNetTotal = 0 %}
+{% let sumPdfTotal = 0 %}
+<h2 class="text-center">{%= __("Title") %}</h2>
+<h4 >
+	{% if (filters.month) { %}
+		Month: {%= filters.month %}
+	{% } %}
+</h4>
+
+<hr>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th style="width: 10%">{%= __("Belegart") %}</th>
+			<th style="width: 1%">{%= __("SH") %}</th>
+			<th style="width: 10%">{%= __("Betrag") %}</th>
+			<th style="width: 10%">{%= __("Betrag DATEV") %}</th>
+			<th style="width: 10%">{%= __("Erlöskonto") %}</th>
+
+			<th style="width: 1%">{%= __("Beleg Nr") %}</th>
+			<th style="width: 10%">{%= __("Buchungsdatum") %}</th>
+			<th style="width: 10%">{%= __("Kurzdatum") %}</th>
+			<th style="width: 10%">{%= __("Deb.-Nr.") %}</th>
+			<th style="width: 10%">{%= __("Deb.-Nr. Datev") %}</th>
+
+			<th style="width: 1%">{%= __("Land") %}</th>
+			<th style="width: 10%">{%= __("Buchtext") %}</th>
+			<th style="width: 10%">{%= __("St.-satz") %}</th>
+			<th style="width: 10%">{%= __("Währung") %}</th>
+			<th style="width: 10%">{%= __("Exportdatum") %}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for(var i=0, l=data.length; i<l; i++) { %}
+			{% sumPdfNetTotal+=parseFloat(data[i].pdf_net_total)%}
+			{% sumPdfTotal+=parseFloat(data[i].pdf_total)%}
+        <tr>
+            <td style="text-align: right">{%= data[i].voucher_type%}</td>
+            <td style="text-align: right">{%= data[i].dc%}</td>
+            <td style="text-align: right">{%= data[i].pdf_total%}</td>
+            <td style="text-align: right">{%= data[i].pdf_total_datev%}</td>
+            <td style="text-align: right">{%= data[i].income_account%}</td>
+
+            <td style="text-align: right">{%= data[i].invoice_no%}</td>
+            <td style="text-align: right">{%= data[i].pdf_posting_date%}</td>
+            <td style="text-align: right">{%= data[i].posting_date%}</td>
+            <td style="text-align: right">{%= data[i].debit_to%}</td>
+            <td style="text-align: right">{%= data[i].debitor_no_datev%}</td>
+
+            <td style="text-align: right">{%= data[i].country%}</td>
+            <td style="text-align: right">{%= data[i].journal_text%}</td>
+            <td style="text-align: right">{%= data[i].item_tax_rate%}</td>
+            <td style="text-align: right">{%= data[i].currency%}</td>
+            <td style="text-align: right">{%= data[i].custom_exported_on%}</td>
+        </tr>
+		{% } %}
+	</tbody>
+</table>
+
+<p>Net Total {%= format_currency(sumPdfNetTotal) %}</p>
+<p>Gross Total {%= format_currency(sumPdfTotal) %}</p>
+<p class="text-right text-muted">Printed On {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}</p>

@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "DATEV-Export-.month.-.year.-.####",
+ "creation": "2024-02-26 13:07:22.730340",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "month",
+  "exported_on",
+  "datev_export_mapping",
+  "year",
+  "sales_invoice_csv",
+  "sales_invoice_pdf",
+  "debtors_csv"
+ ],
+ "fields": [
+  {
+   "fieldname": "month",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Month",
+   "reqd": 1
+  },
+  {
+   "fieldname": "exported_on",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Exported On",
+   "reqd": 1
+  },
+  {
+   "fieldname": "datev_export_mapping",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "DATEV Export Mapping",
+   "options": "DATEV Export Mapping",
+   "reqd": 1
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Year"
+  },
+  {
+   "fieldname": "sales_invoice_csv",
+   "fieldtype": "Attach",
+   "label": "Sales Invoice CSV"
+  },
+  {
+   "fieldname": "sales_invoice_pdf",
+   "fieldtype": "Attach",
+   "label": "Sales Invoice PDF"
+  },
+  {
+   "fieldname": "debtors_csv",
+   "fieldtype": "Attach",
+   "label": "Debtors CSV"
+  }
+ ],
+ "in_create": 1,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-03-18 19:15:33.421303",
+ "modified_by": "Administrator",
+ "module": "German Accounting",
+ "name": "DATEV Export Log",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -49,6 +49,7 @@ def validate_tax_category_fields(doc, method=None):
 
 
 def setting_tax_defaults(doc):
+    track_logs = frappe.db.get_single_value("German Accounting Settings", "track_logs")
     if doc.doctype == 'Quotation' and doc.quotation_to == 'Customer' and doc.party_name:
         doc.tax_id = frappe.get_cached_value("Customer", doc.party_name, "tax_id")
 
@@ -61,10 +62,10 @@ def setting_tax_defaults(doc):
             'customer_type': doc.customer_type,
             'is_vat_applicable': is_vat_applicable
         }
-
         if frappe.db.exists('German Accounting Tax Defaults', filters):
             item_tax_template = frappe.get_cached_doc('German Accounting Tax Defaults', filters)
-            frappe.msgprint(item_tax_template.item_tax_template)
+            if track_logs:
+                frappe.msgprint(item_tax_template.item_tax_template)
             for item in doc.items:
                 if item_tax_template.item_tax_template:
                     item.item_tax_template = item_tax_template.item_tax_template

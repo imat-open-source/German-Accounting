@@ -59,7 +59,7 @@ def get_custom_fields():
 		}
 	]
 
-	custom_fields_so_si = [
+	custom_fields_so = [
 		{
 			"label": "German Accounting",
 			"fieldname": "german_accounting",
@@ -83,6 +83,43 @@ def get_custom_fields():
 			"read_only": 1,
 			"translatable": 0,
 			"insert_after": "german_accounting",
+		}
+	]
+
+	custom_fields_si = [
+		{
+			"label": "German Accounting",
+			"fieldname": "german_accounting",
+			"fieldtype": "Section Break",
+		},
+		{
+			"label": "Item Group",
+			"fieldname": "item_group",
+			"fieldtype": "Data",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "german_accounting",
+			"description": "This field will be filled by either 'Goods' or 'Services' depending on the result that is calculated in the item table."
+		},
+		{
+			"label": "Customer Type",
+			"fieldname": "customer_type",
+			"fieldtype": "Select",
+			"options": "\nCompany\nIndividual",
+			"default": "",
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "german_accounting",
+		},
+		{
+			"label": "Exported On",
+			"fieldname": "custom_exported_on",
+			"fieldtype": "Data",
+			"no_copy": 1,
+			"hidden": 0,
+			"read_only": 1,
+			"translatable": 0,
+			"insert_after": "customer_type",
 		}
 	]
 
@@ -115,10 +152,28 @@ def get_custom_fields():
 		}	
 	]
 
+	custom_fields_customer = [
+		{
+			"label": "German Accounting",
+			"fieldname": "german_accounting_section",
+			"fieldtype": "Section Break",
+			"insert_after": None,
+		},
+		{
+			"label": "Billing Address",
+			"fieldname": "billing_address",
+			"fieldtype": "Link",
+			"description": "This represents the standard billing address used for the export for DATEV debtors file.",
+			"insert_after": "german_accounting_section",
+			"options": "Address"
+		}
+	]
+
 	return {
 		"Quotation": custom_fields_quotation,
-		"Sales Order": custom_fields_so_si,
+		"Sales Order": custom_fields_so,
 		"Item Group": custom_fields_item_group,
-		"Sales Invoice": custom_fields_so_si,
-		"Country": custom_fields_country
+		"Sales Invoice": custom_fields_si,
+		"Country": custom_fields_country,
+		"Customer": custom_fields_customer
 	}

@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "DATEV-EM.-.######",
+ "creation": "2024-02-21 08:53:24.984177",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "is_active",
+  "field_mapping_table"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "field_mapping_table",
+   "fieldtype": "Table",
+   "label": "Field Mapping Table",
+   "options": "DATEV Export Mapping Table"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "DATEV Export Log",
+   "link_fieldname": "datev_export_mapping"
+  }
+ ],
+ "modified": "2024-02-27 11:16:38.839878",
+ "modified_by": "Administrator",
+ "module": "German Accounting",
+ "name": "DATEV Export Mapping",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
