@@ -135,8 +135,8 @@ def get_debtors_csv_data(data):
 	"""
 		SELECT
 			DISTINCT cust.tax_id, cust.name as customer, acc.account as debitor_no_datev,
-			addrs.address_line1, addrs.address_line2, addrs.city, addrs.pincode, 
-			(select cn.code from tabCountry as cn WHERE cn.name = addrs.country ) as country_code
+			COALESCE(addrs.address_line1,""), COALESCE(addrs.address_line2,""), COALESCE(addrs.city,""), COALESCE(addrs.pincode,""), 
+			COALESCE((select cn.code from tabCountry as cn WHERE cn.name = addrs.country ),"") as country_code
 		FROM 
 			`tabCustomer` cust
 		LEFT JOIN
